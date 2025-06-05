@@ -22,7 +22,7 @@ public class MailCommandController {
     }
 
     @Operation(
-            summary = "안내 메일 등록/수정/삭제",
+            summary = "안내 메일 등록",
             description = """
     - 안내 메일을 관리합니다.
     """

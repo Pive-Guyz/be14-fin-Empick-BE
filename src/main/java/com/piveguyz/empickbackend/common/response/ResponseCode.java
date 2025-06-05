@@ -51,12 +51,14 @@ public enum ResponseCode {
     //   1) 실무테스트 문제
     EMPLOYMENT_QUESTION_FAIL(false, HttpStatus.INTERNAL_SERVER_ERROR, 2410, "실무테스트 문제 등록에 실패했습니다."),
     EMPLOYMENT_QUESTION_DUPLICATE(false, HttpStatus.CONFLICT, 2411, "동일한 문제가 이미 등록되어 있습니다."),
-    EMPLOYMENT_QUESTION_NOT_FOUND(false, HttpStatus.NOT_FOUND, 2412, "요청한 문제를 찾을 수 없습니다."),
-    EMPLOYMENT_QUESTION_INVALID_TYPE(false, HttpStatus.BAD_REQUEST, 2413, "유효하지 않은 실무 테스트 유형입니다."),
-    EMPLOYMENT_QUESTION_INVALID_DIFFICULTY(false, HttpStatus.BAD_REQUEST, 2414, "유효하지 않은 난이도입니다."),
-    EMPLOYMENT_QUESTION_INVALID_MEMBER(false, HttpStatus.BAD_REQUEST, 2415, "작성자 정보가 유효하지 않습니다."),
+    EMPLOYMENT_QUESTION_INVALID_MEMBER(false, HttpStatus.BAD_REQUEST, 2412, "작성자 정보가 유효하지 않습니다."),
+    EMPLOYMENT_QUESTION_INVALID_UPDATED_MEMBER(false, HttpStatus.BAD_REQUEST, 2413, "수정자 정보가 유효하지 않습니다."),
+    EMPLOYMENT_QUESTION_NOT_FOUND(false, HttpStatus.NOT_FOUND, 2414, "요청한 문제를 찾을 수 없습니다."),
+    EMPLOYMENT_QUESTION_DELETE_CONFLICT(false, HttpStatus.CONFLICT, 2415, "이 문제는 다른 곳에서 사용 중이므로 삭제할 수 없습니다."),
 
-    //  면접 일정 - 2500 ~ 2599
+
+    //  면접 - 2500 ~ 2599
+    EMPLOYMENT_INTERVIEW_CRITERIA_NOT_FOUND(false, HttpStatus.BAD_REQUEST, 2500, "존재하지 않는 면접 기준입니다."),
 
 
     //  안내 메일 - 2600 ~ 2699

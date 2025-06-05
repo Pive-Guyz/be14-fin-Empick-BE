@@ -9,7 +9,7 @@ import java.util.List;
 public interface MailMapper {
     List<MailQueryDTO> findAll();
 
-    MailQueryDTO findById();
+    MailQueryDTO findById(Integer id);
 
-    List<MailQueryDTO> findByEmail();
+    List<MailQueryDTO> findByEmail(String email);
 }

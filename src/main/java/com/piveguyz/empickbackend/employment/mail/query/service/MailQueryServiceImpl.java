@@ -26,7 +26,7 @@ public class MailQueryServiceImpl implements MailQueryService {
 
     @Override
     public MailQueryDTO findById(Integer id) {
-        MailQueryDTO mailQueryDTO = mailMapper.findById();
+        MailQueryDTO mailQueryDTO = mailMapper.findById(id);
         if(mailQueryDTO == null){
             throw new BusinessException(ResponseCode.EMPLOYMENT_MAIL_NOT_FOUND);
         }
@@ -35,8 +35,8 @@ public class MailQueryServiceImpl implements MailQueryService {
 
     @Override
     public List<MailQueryDTO> findByEmail(String email) {
-        List<MailQueryDTO> mailQueryDTOList = mailMapper.findByEmail();
-        if(email == null || email.trim().isEmpty()){
+        List<MailQueryDTO> mailQueryDTOList = mailMapper.findByEmail(email);
+        if(!email.contains("@")){
             throw new BusinessException(ResponseCode.EMPLOYMENT_MAIL_INADEQUATE_EMAIL);
         }
         if(mailQueryDTOList.isEmpty()){

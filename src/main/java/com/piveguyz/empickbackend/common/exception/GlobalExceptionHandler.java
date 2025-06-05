@@ -58,12 +58,12 @@ public class GlobalExceptionHandler {
 
             if ("type".equals(field)) {
                 return ResponseEntity
-                        .status(ResponseCode.EMPLOYMENT_QUESTION_INVALID_TYPE.getHttpStatus())
-                        .body(CustomApiResponse.of(ResponseCode.EMPLOYMENT_QUESTION_INVALID_TYPE));
+                        .status(ResponseCode.EMPLOYMENT_INVALID_TYPE.getHttpStatus())
+                        .body(CustomApiResponse.of(ResponseCode.EMPLOYMENT_INVALID_TYPE));
             } else if ("difficulty".equals(field)) {
                 return ResponseEntity
-                        .status(ResponseCode.EMPLOYMENT_QUESTION_INVALID_DIFFICULTY.getHttpStatus())
-                        .body(CustomApiResponse.of(ResponseCode.EMPLOYMENT_QUESTION_INVALID_DIFFICULTY));
+                        .status(ResponseCode.EMPLOYMENT_INVALID_DIFFICULTY.getHttpStatus())
+                        .body(CustomApiResponse.of(ResponseCode.EMPLOYMENT_INVALID_DIFFICULTY));
             }
         }
 

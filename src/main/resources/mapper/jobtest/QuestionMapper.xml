@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.piveguyz.empickbackend.employment.jobtests.question.query.mapper.QuestionMapper">
+    <resultMap type="com.piveguyz.empickbackend.employment.jobtests.question.query.dto.QuestionListQueryDTO"
+               id="QuestionListMap">
+
+        <!-- 문제 전체 목록 조회 -->
+        <id property="id" column="id"/>
+        <result property="content" column="content"/>
+        <result property="type" column="type"
+                typeHandler="com.piveguyz.empickbackend.employment.jobtests.common.typehandler.QuestionTypeHandler"/>
+        <result property="difficulty" column="difficulty"
+                typeHandler="com.piveguyz.empickbackend.employment.jobtests.common.typehandler.JobtestDifficultyTypeHandler"/>
+        <result property="createdMemberId" column="created_member_id"/>
+        <result property="updatedMemberId" column="updated_member_id"/>
+    </resultMap>
+
+    <!-- 문제 상세 조회 -->
+    <!--        내용, 상세 내용, 유형, 난이도, 답안, 생성자, 생성일, 최종 수정자, 최종 수정일-->
+    <resultMap type="com.piveguyz.empickbackend.employment.jobtests.question.query.dto.QuestionQueryDTO"
+               id="QuestionFullMap">
+        <id property="id" column="q_id"/>
+        <result property="content" column="q_content"/>
+        <result property="detailContent" column="q_detail_content"/>
+        <result property="type" column="q_type"
+                typeHandler="com.piveguyz.empickbackend.employment.jobtests.common.typehandler.QuestionTypeHandler"/>
+        <result property="difficulty" column="q_difficulty"
+                typeHandler="com.piveguyz.empickbackend.employment.jobtests.common.typehandler.JobtestDifficultyTypeHandler"/>
+        <result property="answer" column="q_answer"/>
+        <result property="createdAt" column="q_created_at"/>
+        <result property="updatedAt" column="q_updated_at"/>
+        <result property="createdMemberId" column="q_created_member_id"/>
+        <result property="updatedMemberId" column="q_updated_member_id"/>
+
+        <!-- 1:N 관계 -->
+        <collection property="options" resultMap="QuestionOptionMap"/>
+        <collection property="usedJobTests" resultMap="UsedJobTestMap"/>
+    </resultMap>
+
+
+    <!--        문제 선택지-->
+    <resultMap id="QuestionOptionMap"
+               type="com.piveguyz.empickbackend.employment.jobtests.question.query.dto.QuestionOptionDTO">
+        <id property="id" column="qo_id"/>
+        <result property="optionNumber" column="qo_option_number"/>
+        <result property="content" column="qo_content"/>
+    </resultMap>
+
+    <!--        해당 문제를 사용하고 있는 실무 테스트 id-->
+    <resultMap id="UsedJobTestMap"
+               type="com.piveguyz.empickbackend.employment.jobtests.question.query.dto.UsedJobtestDTO">
+        <id property="id" column="jt_id"/>
+        <result property="title" column="jt_title"/>
+    </resultMap>
+
+
+    <select id="selectAllQuestion" resultMap="QuestionListMap">
+        SELECT q.id,
+               q.content,
+               q.type,
+               q.difficulty,
+               q.created_member_id,
+               q.updated_member_id
+        FROM question q
+    </select>
+
+
+    <select id="selectQuestionFullById" resultMap="QuestionFullMap">
+        SELECT q.id                AS q_id,
+               q.content           AS q_content,
+               q.detail_content    AS q_detail_content,
+               q.type              AS q_type,
+               q.difficulty        AS q_difficulty,
+               q.answer            AS q_answer,
+               q.created_at        AS q_created_at,
+               q.updated_at        AS q_updated_at,
+               q.created_member_id AS q_created_member_id,
+               q.updated_member_id AS q_updated_member_id,
+
+               qo.id               AS qo_id,
+               qo.option_number    AS qo_option_number,
+               qo.content          AS qo_content,
+
+               jt.id               AS jt_id,
+               jt.title            AS jt_title
+        FROM question q
+                 LEFT JOIN question_option qo ON qo.question_id = q.id
+                 LEFT JOIN job_test_question jtq ON jtq.question_id = q.id
+                 LEFT JOIN job_test jt ON jt.id = jtq.job_test_id
+        WHERE q.id = #{id}
+    </select>
+</mapper>

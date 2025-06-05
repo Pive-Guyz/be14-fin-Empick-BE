@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.piveguyz.empickbackend.employment.interviewCriteria.query.mapper.InterviewCriteriaMapper">
+    <resultMap id="InterviewCriteriaResultMap" type="com.piveguyz.empickbackend.employment.interviewCriteria.query.dto.InterviewCriteriaQueryDTO">
+        <id column="id" property="id"/>
+        <result column="content" property="content"/>
+        <result column="detail_content" property="detailContent"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="member_id" property="memberId"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="InterviewCriteriaResultMap">
+        SELECT
+            id,
+            content,
+            detail_content,
+            is_deleted,
+            member_id,
+            updated_at
+        FROM interview_criteria;
+    </select>
+
+    <select id="findById" resultMap="InterviewCriteriaResultMap">
+        SELECT
+            id,
+            content,
+            detail_content,
+            is_deleted,
+            member_id,
+            updated_at
+        FROM interview_criteria
+        WHERE id = #{id};
+    </select>
+
+    <select id="searchByContent" resultMap="InterviewCriteriaResultMap">
+        SELECT
+            id,
+            content,
+            detail_content,
+            is_deleted,
+            member_id,
+            updated_at
+        FROM interview_criteria
+        WHERE content LIKE CONCAT('%', #{content}, '%');
+    </select>
+
+</mapper>

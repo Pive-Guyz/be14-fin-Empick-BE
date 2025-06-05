@@ -62,9 +62,8 @@ public class MailTemplateCommandServiceImpl implements MailTemplateCommandServic
                 .orElseThrow(() -> new BusinessException(ResponseCode.EMPLOYMENT_MAIL_TEMPLATE_NOT_FOUND));
         mailTemplateEntity.setTitle(title);
         mailTemplateEntity.setContent(content);
-        mailTemplateEntity.setIsDeleted(mailTemplateCommandDTO.getIsDeleted());
         mailTemplateEntity.setMemberId(mailTemplateCommandDTO.getMemberId());
-        mailTemplateEntity.setUpdatedAt(mailTemplateCommandDTO.getUpdatedAt());
+        mailTemplateEntity.setUpdatedAt(LocalDateTime.now());
         mailTemplateEntity = mailTemplateRepository.save(mailTemplateEntity);
         mailTemplateCommandDTO = mailTemplateCommandMapper.toDTO(mailTemplateEntity);
         return mailTemplateCommandDTO;

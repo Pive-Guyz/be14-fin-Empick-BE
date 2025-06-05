@@ -34,11 +34,11 @@ public class MailCommandServiceImpl implements MailCommandService {
         MailEntity mailEntity = new MailEntity();
         mailEntity.setApplicantId(mailCommandDTO.getApplicantId());
         mailEntity.setEmail(mailCommandDTO.getEmail());
-        mailEntity.setContent(content);
-        mailEntity.setSenderId(mailCommandDTO.getSenderId());
+        mailEntity.setContent(mailCommandDTO.getContent());
+        mailEntity.setSenderId(1);
         mailEntity.setSendedAt(LocalDateTime.now());
         MailEntity savedMailEntity = mailRepository.save(mailEntity);
         MailCommandDTO savedMailCommandDTO = mailCommandMapper.toDTO(savedMailEntity);
-        return savedMailCommandDTO   ;
+        return savedMailCommandDTO;
     }
 }
