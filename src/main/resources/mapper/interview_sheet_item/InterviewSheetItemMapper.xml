@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.piveguyz.empickbackend.employment.interviewSheetItem.query.mapper.InterviewSheetItemMapper">
+    <resultMap id="InterviewSheetItemResultMap" type="com.piveguyz.empickbackend.employment.interviewSheetItem.query.dto.InterviewSheetItemQueryDTO">
+        <id column="id" property="id"/>
+        <result column="sheet_id" property="sheetId"/>
+        <result column="criteria_id" property="criteriaId"/>
+        <result column="weight" property="weight"/>
+        <result column="member_id" property="memberId"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="InterviewSheetItemResultMap">
+        SELECT
+            id,
+            sheet_id,
+            criteria_id,
+            weight,
+            member_id,
+            updated_at
+        FROM interview_sheet_item;
+    </select>
+
+    <select id="findById" resultMap="InterviewSheetItemResultMap">
+        SELECT
+            id,
+            sheet_id,
+            criteria_id,
+            weight,
+            member_id,
+            updated_at
+        FROM interview_sheet_item
+        WHERE id = #{id};
+    </select>
+
+    <select id="findBySheetId" resultMap="InterviewSheetItemResultMap">
+        SELECT
+            id,
+            sheet_id,
+            criteria_id,
+            weight,
+            member_id,
+            updated_at
+        FROM interview_sheet_item
+        WHERE sheet_id = #{sheetId};
+    </select>
+
+    <select id="findByCriteriaId" resultMap="InterviewSheetItemResultMap">
+        SELECT
+            id,
+            sheet_id,
+            criteria_id,
+            weight,
+            member_id,
+            updated_at
+        FROM interview_sheet_item
+        WHERE criteria_id = #{criteriaId};
+    </select>
+
+</mapper>

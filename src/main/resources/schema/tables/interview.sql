@@ -1,3 +1,13 @@
+SET foreign_key_checks = 0;
+
+DROP TABLE IF EXISTS `interview_sheet`;
+DROP TABLE IF EXISTS `interview_criteria`;
+DROP TABLE IF EXISTS `interview_sheet_item`;
+DROP TABLE IF EXISTS `interview`;
+DROP TABLE IF EXISTS `interview_score`;
+
+SET foreign_key_checks = 1;
+
 CREATE TABLE `interview_sheet` (
    `id`	INT	NOT NULL PRIMARY KEY AUTO_INCREMENT COMMENT 'id',
    `name`	VARCHAR(255)	NOT NULL COMMENT '이름',

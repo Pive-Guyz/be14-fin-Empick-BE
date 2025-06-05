@@ -1,3 +1,10 @@
+SET foreign_key_checks = 0;
+
+DROP TABLE IF EXISTS `mail`;
+DROP TABLE IF EXISTS `mail_template`;
+
+SET foreign_key_checks = 1;
+
 CREATE TABLE `mail` (
     `id` INT NOT NULL PRIMARY KEY AUTO_INCREMENT COMMENT 'id',
     `applicant_id` INT NOT NULL COMMENT '지원자 id',
