@@ -19,7 +19,7 @@ import java.util.List;
 
 @Tag(name = "ApplicantBookmark", description = "북마크 지원자 조회 API")
 @RestController
-@RequestMapping("api/v1/employment/applicant-bookmark")
+@RequestMapping("/api/v1/employment/applicant-bookmark")
 @RequiredArgsConstructor
 public class ApplicantBookmarkQueryController {
 

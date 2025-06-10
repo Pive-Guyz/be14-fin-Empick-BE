@@ -21,7 +21,7 @@ import java.util.List;
 
 @Tag(name="면접 Query API", description="면접 조회")
 @RestController
-@RequestMapping("api/v1/employment/interview")
+@RequestMapping("/api/v1/employment/interview")
 public class InterviewQueryController {
     private final InterviewQueryService service;
 

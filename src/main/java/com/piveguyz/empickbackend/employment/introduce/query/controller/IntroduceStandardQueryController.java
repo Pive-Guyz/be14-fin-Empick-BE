@@ -21,7 +21,7 @@ import java.util.List;
 
 @Tag(name = "자기소개서 기준표", description = "자기소개ㅐ서 기준표")
 @RequiredArgsConstructor
-@RequestMapping("api/v1/employment/introduce-standard")
+@RequestMapping("/api/v1/employment/introduce-standard")
 @RestController
 public class IntroduceStandardQueryController {
 

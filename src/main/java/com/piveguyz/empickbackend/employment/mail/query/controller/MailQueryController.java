@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/v1/employment/mail")
+@RequestMapping("/api/v1/employment/mail")
 public class MailQueryController {
     private final MailQueryService mailQueryService;
 

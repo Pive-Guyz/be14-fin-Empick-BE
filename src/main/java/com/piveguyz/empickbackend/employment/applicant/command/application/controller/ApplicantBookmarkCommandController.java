@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "지원자 북마크 등록/삭제 API", description = "지원자를 북마크에 등록, 삭제합니다.")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/v1/employment/applicant-bookmark")
+@RequestMapping("/api/v1/employment/applicant-bookmark")
 public class ApplicantBookmarkCommandController {
 
     private final ApplicantBookmarkCommandService applicantBookmarkCommandService;

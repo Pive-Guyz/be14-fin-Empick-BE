@@ -20,7 +20,7 @@ import java.util.List;
 
 @Tag(name = "Applicant", description = "지원자 조회 API")
 @RestController
-@RequestMapping("api/v1/employment/applicant")
+@RequestMapping("/api/v1/employment/applicant")
 @RequiredArgsConstructor
 public class ApplicantQueryController {
 

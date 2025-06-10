@@ -15,7 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/v1/employment/mail")
+// Leading slash clarifies that this mapping is absolute to the server root.
+// While Spring also accepts a path without '/', using it prevents accidental
+// relative path resolutions when combining with method-level mappings.
+@RequestMapping("/api/v1/employment/mail")
 public class MailCommandController {
     private final MailCommandService mailCommandService;
 

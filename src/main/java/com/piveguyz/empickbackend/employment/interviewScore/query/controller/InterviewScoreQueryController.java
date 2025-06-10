@@ -18,7 +18,7 @@ import java.util.List;
 
 @Tag(name = "면접 평가 점수 Query API", description = "면접 평가 점수 조회")
 @RestController
-@RequestMapping("api/v1/employment/interviewScore")
+@RequestMapping("/api/v1/employment/interviewScore")
 public class InterviewScoreQueryController {
     private final InterviewScoreQueryService interviewScoreQueryService;
 

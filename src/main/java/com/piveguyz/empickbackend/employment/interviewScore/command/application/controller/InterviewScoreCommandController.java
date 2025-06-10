@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "면접 평가 점수 Command API", description = "면접 평가 점수 관리")
 @RestController
-@RequestMapping("api/v1/employment/interviewScore")
+@RequestMapping("/api/v1/employment/interviewScore")
 public class InterviewScoreCommandController {
     private final InterviewScoreCommandService service;
 

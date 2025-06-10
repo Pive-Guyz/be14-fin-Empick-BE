@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name="면접 Command API", description="면접 관리")
 @RestController
-@RequestMapping("api/v1/employment/interview")
+@RequestMapping("/api/v1/employment/interview")
 public class InterviewCommandController {
     private final InterviewCommandService service;
 
