@@ -18,7 +18,7 @@ public class IntroduceResultQueryDTO {
     private String content;
     private int ratingScore;
     private int introduceStandardId;
-    private IntroduceRatingResultStatus status;
+    private Integer introduceId;
     private int updatedBy;
     private LocalDateTime updatedAt;
 }

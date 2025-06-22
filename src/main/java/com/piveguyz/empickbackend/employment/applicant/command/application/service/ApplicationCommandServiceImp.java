@@ -40,8 +40,17 @@ public class ApplicationCommandServiceImp implements ApplicationCommandService {
         ApplicationEntity entity = applicationRepository.findById(dto.getId())
                 .orElseThrow(() -> new BusinessException(ResponseCode.EMPLOYMENT_APPLICATION_NOT_FOUND));
 
-        // 2. status만 업데이트
+        // 2. 필드 업데이트 (status와 introduceRatingResultId)
         entity.setStatus(dto.getStatus());
+
+        // introduceRatingResultId가 null이 아닌 경우에만 업데이트
+        if (dto.getIntroduceRatingResultId() != null) {
+            entity.setIntroduceRatingResultId(dto.getIntroduceRatingResultId());
+        }
+
+        // updatedAt과 updatedBy도 설정
+        entity.setUpdatedAt(LocalDateTime.now());
+        // entity.setUpdatedBy(현재_사용자_ID); // 필요시 추가
 
         // 3. 저장
         ApplicationEntity updated = applicationRepository.save(entity);

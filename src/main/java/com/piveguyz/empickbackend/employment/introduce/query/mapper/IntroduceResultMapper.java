@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface IntroduceResultMapper {
     List<IntroduceResultQueryDTO> findAllIntroduceResult();
+
+    IntroduceResultQueryDTO findById(Integer id);
 }

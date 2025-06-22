@@ -16,4 +16,5 @@ public class IntroduceQueryDTO {
     private String content;
     private Integer applicantId;
     private Integer introduceTemplateId;
+    private Integer applicationId;
 }

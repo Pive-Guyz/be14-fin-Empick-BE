@@ -37,6 +37,9 @@ public class IntroduceRatingResultEntity {
     @Column(name = "introduce_standard_id", nullable = false)
     private Integer introduceStandardId;
 
+    @Column(name = "introduce_id", nullable = false)
+    private Integer introduceId;
+
     public void updateIntroduceRatingResultEntity(IntroduceRatingResultUpdateCommandDTO dto) {
         this.content = dto.getContent();
         this.ratingScore = dto.getRatingScore();

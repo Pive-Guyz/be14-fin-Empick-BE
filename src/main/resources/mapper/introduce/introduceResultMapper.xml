@@ -10,7 +10,7 @@
         <result property="content" column="content"/>
         <result property="ratingScore" column="rating_score"/>
         <result property="introduceStandardId" column="introduce_standard_id"/>
-        <result column="status" property="status" typeHandler="com.piveguyz.empickbackend.common.handler.IntroduceResultStatusHandler"/>
+        <result property="introduceId" column="introduce_id"/>
         <result property="updatedBy" column="updated_by"/>
         <result property="updatedAt" column="updated_at"/>
     </resultMap>
@@ -22,11 +22,24 @@
             content,
             rating_score,
             introduce_standard_id,
-            status,
+            introduce_id,
             updated_by,
             updated_at
         FROM
             introduce_rating_result
+    </select>
+
+    <select id="findById" parameterType="int" resultType="IntroduceResultQueryDTO">
+        SELECT
+            id,
+            content,
+            rating_score,
+            introduce_id,
+            introduce_standard_id,
+            member_id,
+            updated_at
+        FROM introduce_rating_result
+        WHERE id = #{id}
     </select>
 
 </mapper>

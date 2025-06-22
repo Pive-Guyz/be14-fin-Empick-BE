@@ -10,9 +10,36 @@
             id,
             content,
             applicant_id,
-            introduce_template_id
+            introduce_template_id,
+            application_id
         FROM
             introduce
+    </select>
+
+    <select id="findIntroduceByApplicationId" resultType="com.piveguyz.empickbackend.employment.introduce.query.dto.IntroduceQueryDTO">
+        SELECT
+            id,
+            content,
+            applicant_id,
+            introduce_template_id,
+            application_id
+        FROM
+            introduce
+        WHERE
+            application_id = #{applicationId}
+    </select>
+
+    <select id="findIntroduceById" resultType="com.piveguyz.empickbackend.employment.introduce.query.dto.IntroduceQueryDTO">
+        SELECT
+            id,
+            content,
+            applicant_id,
+            introduce_template_id,
+            application_id
+        FROM
+            introduce
+        WHERE
+            id = #{id}
     </select>
 
 </mapper>

@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface IntroduceResultQueryService {
     List<IntroduceResultQueryDTO> findAllIntroduceResult();
+
+    IntroduceResultQueryDTO findIntroduceResultById(Integer id);
 }

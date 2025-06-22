@@ -69,7 +69,7 @@
                address,
                score
         FROM interview
-        WHERE datetime BETWEEN #{start} AND #{end}
+        WHERE datetime > #{start} AND #{end} > datetime
     </select>
 
 </mapper>

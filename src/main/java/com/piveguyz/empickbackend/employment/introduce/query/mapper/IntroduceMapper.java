@@ -8,4 +8,8 @@ import java.util.List;
 @Mapper
 public interface IntroduceMapper {
     List<IntroduceQueryDTO> findAllIntroduce();
+
+    IntroduceQueryDTO findIntroduceById(Integer id);
+
+    IntroduceQueryDTO findIntroduceByApplicationId(Integer applicationId);
 }

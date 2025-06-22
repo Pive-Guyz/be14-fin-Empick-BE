@@ -16,6 +16,7 @@ public class IntroduceRatingResultCommandMapper {
                 .ratingScore(dto.getRatingScore())
                 .memberId(dto.getMemberId())
                 .introduceStandardId(dto.getIntroduceStandardId())
+                .introduceId(dto.getIntroduceId())
                 .build();
     }
 
@@ -28,6 +29,7 @@ public class IntroduceRatingResultCommandMapper {
                 .ratingScore(entity.getRatingScore())
                 .memberId(entity.getMemberId())
                 .introduceStandardId(entity.getIntroduceStandardId())
+                .introduceId(entity.getIntroduceId())
                 .build();
     }
 

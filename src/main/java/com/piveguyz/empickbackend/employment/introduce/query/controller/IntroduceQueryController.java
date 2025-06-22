@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -37,5 +38,23 @@ public class IntroduceQueryController {
     public ResponseEntity<CustomApiResponse<List<IntroduceQueryDTO>>> getAllIntroduce() {
         return ResponseEntity.status(ResponseCode.SUCCESS.getHttpStatus())
                 .body(CustomApiResponse.of(ResponseCode.SUCCESS, introduceQueryService.findAllIntroduce()));
+    }
+
+    @Operation(summary = "applicationId로 자기소개서 조회", description = "특정 지원서의 자기소개서를 조회합니다.")
+    @GetMapping("/application/{applicationId}")
+    public ResponseEntity<CustomApiResponse<IntroduceQueryDTO>> getIntroduceByApplicationId(
+            @PathVariable("applicationId") Integer applicationId) {
+        return ResponseEntity.status(ResponseCode.SUCCESS.getHttpStatus())
+                .body(CustomApiResponse.of(ResponseCode.SUCCESS,
+                        introduceQueryService.findIntroduceByApplicationId(applicationId)));
+    }
+
+    @Operation(summary = "ID로 자기소개서 조회", description = "특정 자기소개서를 조회합니다.")
+    @GetMapping("/{id}")
+    public ResponseEntity<CustomApiResponse<IntroduceQueryDTO>> getIntroduceById(
+            @PathVariable("id") Integer id) {
+        return ResponseEntity.status(ResponseCode.SUCCESS.getHttpStatus())
+                .body(CustomApiResponse.of(ResponseCode.SUCCESS,
+                        introduceQueryService.findIntroduceById(id)));
     }
 }

@@ -16,9 +16,19 @@ public class IntroduceQueryServiceImp implements IntroduceQueryService {
 
     @Override
     public List<IntroduceQueryDTO> findAllIntroduce() {
-
         return introduceMapper.findAllIntroduce();
     }
+
+    @Override
+    public IntroduceQueryDTO findIntroduceByApplicationId(Integer applicationId) {
+        return introduceMapper.findIntroduceByApplicationId(applicationId);
+    }
+
+    @Override
+    public IntroduceQueryDTO findIntroduceById(Integer id) {
+        return introduceMapper.findIntroduceById(id);
+    }
+
 
 
 }
