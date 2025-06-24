@@ -75,23 +75,42 @@ jobs:
           # 여러 키 형식 변환 시도
           echo "🔧 Attempting key format conversions..."
 
-          # 방법 1: OpenSSL RSA 변환
-          if openssl rsa -in ~/.ssh/camp.pem -out ~/.ssh/camp_rsa.pem 2>/dev/null; then
+                    # 방법 1: OpenSSL RSA 변환 (상세 에러 출력)
+          echo "🔧 Trying OpenSSL RSA conversion..."
+          if openssl rsa -in ~/.ssh/camp.pem -out ~/.ssh/camp_rsa.pem 2>&1; then
             echo "✅ OpenSSL RSA conversion successful"
             cp ~/.ssh/camp_rsa.pem ~/.ssh/camp.pem
             chmod 600 ~/.ssh/camp.pem
+          else
+            echo "⚠️ OpenSSL RSA conversion failed"
           fi
 
-          # 방법 2: PKCS#8 형식으로 변환
-          if openssl pkcs8 -topk8 -inform PEM -outform PEM -nocrypt -in ~/.ssh/camp.pem -out ~/.ssh/camp_pkcs8.pem 2>/dev/null; then
+          # 방법 2: PKCS#8 형식으로 변환 (상세 에러 출력)
+          echo "🔧 Trying PKCS#8 conversion..."
+          if openssl pkcs8 -topk8 -inform PEM -outform PEM -nocrypt -in ~/.ssh/camp.pem -out ~/.ssh/camp_pkcs8.pem 2>&1; then
             echo "✅ PKCS#8 conversion successful"
             cp ~/.ssh/camp_pkcs8.pem ~/.ssh/camp.pem
             chmod 600 ~/.ssh/camp.pem
+          else
+            echo "⚠️ PKCS#8 conversion failed"
           fi
 
-          # 방법 3: ssh-keygen으로 OpenSSH 형식 변환
-          if ssh-keygen -p -m OpenSSH -N "" -f ~/.ssh/camp.pem 2>/dev/null; then
+          # 방법 3: ssh-keygen으로 OpenSSH 형식 변환 (상세 에러 출력)
+          echo "🔧 Trying ssh-keygen OpenSSH conversion..."
+          if ssh-keygen -p -m OpenSSH -N "" -f ~/.ssh/camp.pem 2>&1; then
             echo "✅ OpenSSH format conversion successful"
+          else
+            echo "⚠️ ssh-keygen conversion failed"
+          fi
+
+          # 방법 4: 레거시 OpenSSL 옵션 시도
+          echo "🔧 Trying legacy OpenSSL options..."
+          if openssl rsa -in ~/.ssh/camp.pem -out ~/.ssh/camp_legacy.pem -traditional 2>/dev/null; then
+            echo "✅ Legacy OpenSSL conversion successful"
+            cp ~/.ssh/camp_legacy.pem ~/.ssh/camp.pem
+            chmod 600 ~/.ssh/camp.pem
+          else
+            echo "⚠️ Legacy OpenSSL conversion failed"
           fi
 
           echo "🔧 Final key file size: $(wc -c < ~/.ssh/camp.pem) bytes"
@@ -119,7 +138,11 @@ jobs:
             echo "🔧 Proceeding with SSH connection test..."
           fi
 
-          ssh-keyscan -H ${{ secrets.BASTION_IP }} >> ~/.ssh/known_hosts
+          echo "🔧 Adding bastion host to known_hosts..."
+          ssh-keyscan -H ${{ secrets.BASTION_IP }} >> ~/.ssh/known_hosts 2>/dev/null || {
+            echo "⚠️ ssh-keyscan failed, but continuing with StrictHostKeyChecking=no"
+            echo "# Bastion host will be accepted without verification" >> ~/.ssh/known_hosts
+          }
 
           # SSH 에이전트 시작 및 키 추가 시도
           echo "🔧 Starting SSH agent and adding key..."
