@@ -1,5 +1,6 @@
 name: Deploy Backend to VPC2 (Simple Strategy)
 
+# 🔧 CI/CD Test: Actuator 의존성 수정 후 배포 테스트 (2024-12-19)
 on:
   push:
     branches: [main]
@@ -46,7 +47,7 @@ jobs:
       - name: 🏗️ Build with Gradle
         run: ./gradlew clean build -x test
 
-      - name: 🔑 Configure AWS credentials
+      - name: 🔐 Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
