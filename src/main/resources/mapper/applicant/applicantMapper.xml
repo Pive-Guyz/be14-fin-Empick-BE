@@ -18,6 +18,7 @@
     <resultMap id="ApplicantFullInfoResultMap"
                type="com.piveguyz.empickbackend.employment.applicant.query.dto.ApplicantFullInfoDTO">
         <result property="applicantId" column="applicant_id"/>
+        <result property="applicationId" column="application_id"/>
         <result property="name" column="name"/>
         <result property="phone" column="phone"/>
         <result property="email" column="email"/>
@@ -38,6 +39,7 @@
     <select id="findAllApplicantFullInfo" resultMap="ApplicantFullInfoResultMap">
         SELECT DISTINCT
         a.id AS applicant_id,
+        ap.id AS application_id,
         a.name,
         a.phone,
         a.email,

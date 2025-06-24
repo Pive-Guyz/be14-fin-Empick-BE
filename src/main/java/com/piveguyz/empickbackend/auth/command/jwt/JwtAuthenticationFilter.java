@@ -1,5 +1,8 @@
 package com.piveguyz.empickbackend.auth.command.jwt;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.piveguyz.empickbackend.common.response.CustomApiResponse;
+import com.piveguyz.empickbackend.common.response.ResponseCode;
 import com.piveguyz.empickbackend.security.CustomMemberDetails;
 import com.piveguyz.empickbackend.security.CustomMemberDetailsService;
 import io.jsonwebtoken.Claims;
@@ -9,10 +12,12 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -26,6 +31,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtProvider jwtProvider;
     private final CustomMemberDetailsService customMemberDetailsService;
+    private final AuthenticationEntryPoint authenticationEntryPoint;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -61,7 +67,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
             } catch (JwtException e) {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid or expired token");
+                SecurityContextHolder.clearContext();
+                authenticationEntryPoint.commence(
+                        request,
+                        response,
+                        new InsufficientAuthenticationException("JWT invalid or expired", e)
+                );
                 return;
             }
         }

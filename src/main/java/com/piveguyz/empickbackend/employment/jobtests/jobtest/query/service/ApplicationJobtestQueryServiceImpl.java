@@ -3,6 +3,8 @@ package com.piveguyz.empickbackend.employment.jobtests.jobtest.query.service;
 import com.piveguyz.empickbackend.common.exception.BusinessException;
 import com.piveguyz.empickbackend.common.response.ResponseCode;
 import com.piveguyz.empickbackend.employment.jobtests.jobtest.command.application.dto.JobtestEntryRequestDTO;
+import com.piveguyz.empickbackend.employment.jobtests.jobtest.query.dto.ApplicationJobtestRequestDTO;
+import com.piveguyz.empickbackend.employment.jobtests.jobtest.query.dto.ApplicationJobtestResponseDTO;
 import com.piveguyz.empickbackend.employment.jobtests.jobtest.query.mapper.ApplicationJobtestMapper;
 import com.piveguyz.empickbackend.employment.jobtests.jobtest.query.dto.ApplicationJobtestQueryDTO;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +40,11 @@ public class ApplicationJobtestQueryServiceImpl implements ApplicationJobtestQue
         if (submittedAt != null) {
             throw new BusinessException(ResponseCode.EMPLOYMENT_APPLICATION_JOBTEST_ALREADY_COMPLETE);
         }
+    }
+
+    @Override
+    public ApplicationJobtestResponseDTO getApplicationJobtestByApplicationId(int applicationId) {
+        return applicationJobtestMapper.selectByApplicationId(applicationId);
     }
 
 }

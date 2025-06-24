@@ -50,4 +50,31 @@
         FROM application_job_test
         WHERE id = #{applicationJobtestId}
     </select>
+
+
+    <resultMap id="ApplicationJobtestWithTitleMap" type="com.piveguyz.empickbackend.employment.jobtests.jobtest.query.dto.ApplicationJobtestResponseDTO">
+        <id property="id" column="ajt_id"/>
+        <result property="applicationId" column="application_id"/>
+        <result property="jobtestId" column="job_test_id"/>
+        <result property="jobtestTitle" column="jobtest_title"/>
+        <result property="score" column="score"/>
+        <result column="status" property="status"/>
+    </resultMap>
+
+    <select id="selectByApplicationId" resultMap="ApplicationJobtestWithTitleMap">
+        SELECT
+            ajt.id AS ajt_id,
+            ajt.application_id,
+            ajt.job_test_id,
+            jt.title AS jobtest_title,
+            ajt.grading_total_score AS score,
+            ajt.grading_status AS status
+        FROM application_job_test ajt
+                 LEFT JOIN job_test jt ON ajt.job_test_id = jt.id
+        WHERE ajt.application_id = #{applicationId}
+        LIMIT 1
+    </select>
+
+
+
 </mapper>

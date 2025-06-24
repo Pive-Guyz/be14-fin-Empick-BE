@@ -1,10 +1,10 @@
 package com.piveguyz.empickbackend.employment.jobtests.jobtest.query.mapper;
 
 import com.piveguyz.empickbackend.employment.jobtests.jobtest.query.dto.ApplicationJobtestQueryDTO;
+import com.piveguyz.empickbackend.employment.jobtests.jobtest.query.dto.ApplicationJobtestResponseDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -17,4 +17,6 @@ public interface ApplicationJobtestMapper {
     );
 
     Date selectSubmittedAtById(@Param("applicationJobtestId") int applicationJobtestId);
+
+    ApplicationJobtestResponseDTO selectByApplicationId(@Param("applicationId") int applicationId);
 }

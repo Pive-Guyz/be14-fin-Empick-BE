@@ -15,6 +15,8 @@ public class ApplicantFullInfoDTO {
     // 지원자의 고유 식별자 (PK)
     private int applicantId;
 
+    private Integer applicationId;
+
     // 지원자 이름
     private String name;
 

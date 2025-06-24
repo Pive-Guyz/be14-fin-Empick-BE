@@ -128,7 +128,7 @@ public class AuthCommandController {
     public ResponseEntity<CustomApiResponse<LoginResponseDTO>> refresh(@Valid @RequestBody RefreshTokenRequestDTO request) {
         int memberId = jwtProvider.getMemberIdFromToken(request.getRefreshToken());
 
-        if (!refreshTokenService.validateRefreshToken(memberId, request.getRefreshToken())) {
+        if (request.getRefreshToken() == null || request.getRefreshToken().isBlank() || !refreshTokenService.validateRefreshToken(memberId, request.getRefreshToken())) {
             throw new BusinessException(ResponseCode.INVALID_REFRESH_TOKEN);
         }
 

@@ -77,7 +77,7 @@ CREATE TABLE `applicant` (
                              `name`	VARCHAR(255)	NOT NULL COMMENT '이름',
                              `phone`	VARCHAR(255)	NOT NULL COMMENT '연락처',
                              `email`	VARCHAR(255)	NOT NULL COMMENT '이메일',
-                             `profile_url`	VARCHAR(255)	NOT NULL COMMENT '사진',
+                             `profile_url`	VARCHAR(255)	NULL COMMENT '사진',
                              `birth`	VARCHAR(255)	NOT NULL COMMENT '생년월일',
                              `address`	VARCHAR(255)	NOT NULL COMMENT '주소'
 ) COMMENT '지원자';
@@ -414,7 +414,7 @@ CREATE TABLE `member` (
                           `email`	VARCHAR(255)	NOT NULL,
                           `address`	VARCHAR(255)	NOT NULL,
                           `vacation_count`	INT	NOT NULL	DEFAULT 0,
-                          `hire_at`	DATETIME	NOT NULL,
+                          `hire_at`	DATETIME	NOT NULL DEFAULT CURRENT_TIMESTAMP,
                           `resign_at`	DATETIME	NULL,
                           `created_at`	DATETIME DEFAULT CURRENT_TIMESTAMP	NOT NULL,
                           `created_member_id`	INT	NULL,
@@ -788,7 +788,6 @@ ALTER TABLE vacation
     ADD CONSTRAINT fk_vacation_acceptor FOREIGN KEY (acceptor_id) REFERENCES member(id);
 
 
-
 INSERT INTO role (id, code, name, description, role_type) VALUES
                                                               (1, 'ROLE_HR_ACCESS', '인사팀기능접근', '인사팀 전용 기능에 접근 가능', 0),
                                                               (2, 'ROLE_RECRUITMENT_PLAN_EDITOR', '채용계획서작성', '채용계획서 작성 기능에 접근 가능', 3),
@@ -1059,22 +1058,35 @@ INSERT INTO approval_line (step_order, approval_category_id, position_id) VALUES
 
 
 
--- 채용 요청서 (category_id = 401), 작성자(writer_id)는 예시로 1번으로
-INSERT INTO approval (
-    id, category_id, writer_id, status,
-    first_approver_id, second_approver_id, third_approver_id, fourth_approver_id
-) VALUES (
-             1, 401, 1, 0,   -- status = 0: 대기 상태
-             2, 3, 4, 5  -- 결재선 예시
-         );
+-- 채용 요청서 (category_id = 401), 작성자(writer_id)는 20번으로( 21번 결재할 차례)
+INSERT INTO approval (id, category_id, writer_id, status, first_approver_id, second_approver_id, first_approved_at)
+VALUES (1, 401, 20, 0, 5, 21, '2024-06-22 09:00:00'),
+       (2, 401, 20, 0, 7, 21, '2024-06-23 10:15:00');
 
+-- 채용 요청서
+INSERT INTO approval_content (id, approval_id, item_id, content)
+VALUES
+    (1, 1, 40101, 5),                  -- 부서 (id)
+    (2, 1, 40102, 1),                  -- 직무 (id)
+    (3, 1, 40103, 3),                  -- 모집 인원
+    (4, 1, 40104, '2025-06-23'),         -- 모집 시작일
+    (5, 1, 40105, '2025-06-30'),         -- 모집 마감일
+    (6, 1, 40106, '컴퓨터공학과 전공'),     -- 지원자격
+    (7, 1, 40107, '관련 업무 경험'),         -- 우대사항
+    (8, 1, 40108, '웹 프론트엔드'),         -- 주요 업무
+    (9, 1, 40109, '정규직'),              -- 고용형태
+    (10,1, 40110, '서울'),               -- 근무 지역
+    (11, 2, 40101, 5),
+    (12, 2, 40102, 4),
+    (13, 2, 40103, 1),
+    (14, 2, 40104, '2025-07-01'),
+    (15, 2, 40105, '2025-07-10'),
+    (16, 2, 40106, '전산학 전공, 알고리즘 기본 소양'),
+    (17, 2, 40107, 'AWS, Docker 경험자'),
+    (18, 2, 40108, '데이터 파이프라인 설계 및 유지보수'),
+    (19, 2, 40109, '계약직'),
+    (20, 2, 40110, '부산');
 
-INSERT INTO approval_content (id, approval_id, item_id, content) VALUES
-                                                                     (1,1, 40101, '개발팀'),
-                                                                     (2,1, 40102, '백엔드 개발자'),
-                                                                     (3,1, 40103, '2'),
-                                                                     (4,1, 40104, '신규 프로젝트 런칭으로 인한 인력 보강 필요'),
-                                                                     (5,1, 40105, '2025-07-01');
 
 INSERT INTO recruitment_request (
     headcount,

@@ -32,7 +32,7 @@ public enum ResponseCode {
     MEMBER_NOT_FOUND(false, HttpStatus.NOT_FOUND, 1000, "사원 정보를 찾을 수 없습니다."),
     MEMBER_RESIGNED(false, HttpStatus.NOT_ACCEPTABLE, 1001, "삭제된 사원 정보입니다."),
     MEMBER_STATUS_SUSPENDED(false, HttpStatus.NOT_ACCEPTABLE, 1004, "사원 상태가 차단되었습니다."),
-    MEMBER_EMAIL_DUPLICATED(false, HttpStatus.NOT_ACCEPTABLE, 1005, "이미 존재하는 이메일입니다."),
+    MEMBER_EMAIL_DUPLICATED(false, HttpStatus.CONFLICT , 1005, "이미 존재하는 이메일입니다."),
     MEMBER_CREATED_MEMBER_ID_REQUIRED(false, HttpStatus.BAD_REQUEST, 1006, "입사처리자가 지정되지 않았습니다."),
     MEMBER_CREATED_MEMBER_NOT_FOUND(false, HttpStatus.NOT_FOUND, 1007, "입사처리자를 찾을 수 없습니다."),
     MEMBER_CREATED_MEMBER_NO_PERMISSION(false, HttpStatus.FORBIDDEN, 1008, "입사처리자는 ROLE_HR_ACCESS 권한이 있어야 합니다."),
@@ -49,7 +49,7 @@ public enum ResponseCode {
     EDIT_PROPOSAL_REJECTED(true, HttpStatus.NOT_ACCEPTABLE, 1105, "변경 요청이 거절되었습니다."),
     REQUIRED_LOGIN(true, HttpStatus.NOT_ACCEPTABLE, 1106, "로그인이 필요합니다."),
     ALREDY_RESIGNED(true, HttpStatus.NOT_ACCEPTABLE, 1107, "퇴사 처리된 사원입니다."),
-    INVALID_STATUS_VALUE(true, HttpStatus.NOT_ACCEPTABLE, 1108, "요청된 상태 값이 유효하지 않습니다."),
+    INVALID_STATUS_VALUE(true, HttpStatus.BAD_REQUEST, 1108, "요청된 상태 값이 유효하지 않습니다."),
     EDIT_PROPOSAL_MEMBER_MISMATCH(true, HttpStatus.BAD_REQUEST, 1109, "해당 제안이 사원 정보와 일치하지 않습니다."),
 
     // 부서, 직책, 직무, 직급 관련 NOT_FOUND
@@ -104,7 +104,7 @@ public enum ResponseCode {
     EMPLOYMENT_RECRUITMENT_NO_INTRODUCE_TEMPLATE(false, HttpStatus.BAD_REQUEST, 2040, "자기소개서 템플릿이 지정되지 않았습니다."),
     EMPLOYMENT_RECRUITMENT_NO_MEMBER_ID(false, HttpStatus.BAD_REQUEST, 2041, "작성자 정보가 누락되었습니다."),
     EMPLOYMENT_RECRUITMENT_DUPLICATE_TITLE(false, HttpStatus.CONFLICT, 2042, "같은 제목의 채용 공고가 이미 존재합니다."),
-    EMPLOYMENT_RECRUITMENT_INVALID_STATUS_TRANSITION(false, HttpStatus.CONFLICT, 2043, "잘못된 상태 전환입니다. 승인 대기 → 승인 → 게시 → 종료 순으로만 변경 가능합니다."),
+    EMPLOYMENT_RECRUITMENT_INVALID_STATUS_TRANSITION(false, HttpStatus.BAD_REQUEST, 2043, "잘못된 상태 전환입니다. 승인 대기 → 승인 → 게시 → 종료 순으로만 변경 가능합니다."),
     EMPLOYMENT_RECRUITMENT_HAS_APPLICATIONS(false, HttpStatus.BAD_REQUEST, 2044,"이미 지원자가 존재하는 채용공고는 삭제할 수 없습니다."),
 
     // 4) 지원서 항목
@@ -157,7 +157,7 @@ public enum ResponseCode {
 
 
     //  실무테스트 - 2400 ~ 2499
-    EMPLOYMENT_INVALID_DIFFICULTY(false, HttpStatus.INTERNAL_SERVER_ERROR, 2400, "유효하지 않은 난이도입니다."),
+    EMPLOYMENT_INVALID_DIFFICULTY(false, HttpStatus.NOT_FOUND, 2400, "유효하지 않은 난이도입니다."),
     EMPLOYMENT_INVALID_MEMBER(false, HttpStatus.BAD_REQUEST, 2402, "작성자 정보가 유효하지 않습니다."),
     EMPLOYMENT_INVALID_UPDATED_MEMBER(false, HttpStatus.BAD_REQUEST, 2403, "수정자 정보가 유효하지 않습니다."),
     EMPLOYMENT_INVALID_SATISFIED_VALUE(false, HttpStatus.BAD_REQUEST, 2404, "isSatisfied 값은 'Y' 또는 'N'이어야 합니다."),
@@ -217,7 +217,7 @@ public enum ResponseCode {
     
 
     //  면접 - 2500 ~ 2599
-    EMPLOYMENT_INTERVIEW_CRITERIA_NOT_FOUND(false, HttpStatus.BAD_REQUEST, 2500, "존재하지 않는 면접 기준입니다."),
+    EMPLOYMENT_INTERVIEW_CRITERIA_NOT_FOUND(false, HttpStatus.NOT_FOUND, 2500, "존재하지 않는 면접 기준입니다."),
 
     EMPLOYMENT_INTERVIEW_CRITERIA_NO_CONTENT(false, HttpStatus.BAD_REQUEST, 2510, "내용을 입력하지 않았습니다."),
     EMPLOYMENT_INTERVIEW_CRITERIA_NO_DETAIL_CONTENT(false, HttpStatus.BAD_REQUEST, 2511, "상세 내용을 입력하지 않았습니다."),
@@ -261,7 +261,7 @@ public enum ResponseCode {
 
     // 인증 2700 ~ 2799
     INVALID_REFRESH_TOKEN(false, HttpStatus.UNAUTHORIZED, 2700, "유효하지 않은 Refresh Token입니다."),
-    MEMBER_EMPLOYEE_NUMBER_DUPLICATE(false, HttpStatus.UNAUTHORIZED, 2701, "중복된 사번입니다."),
+    MEMBER_EMPLOYEE_NUMBER_DUPLICATE(false, HttpStatus.CONFLICT, 2701, "중복된 사번입니다."),
 
 
 
