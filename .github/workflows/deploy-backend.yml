@@ -157,14 +157,14 @@ jobs:
 
           echo "🔍 SSH key setup completed"
 
-      - name: 🧪 Test SSH Connection
+      - name: 🧪 Test Connection Methods
         run: |
-          echo "🧪 Testing SSH connection to Bastion..."
+          echo "🧪 Testing connection to Bastion..."
           echo "🔧 SSH client version: $(ssh -V 2>&1)"
           echo "🔧 OpenSSL version: $(openssl version)"
 
-          # SSH 연결 테스트 (더 관대한 옵션 사용)
-                              echo "🔧 Testing network connectivity first..."
+          # 네트워크 연결성 테스트
+          echo "🔧 Testing network connectivity..."
           if ping -c 2 -W 5 ${{ secrets.BASTION_IP }} >/dev/null 2>&1; then
             echo "✅ Network connectivity OK"
           else
@@ -173,48 +173,89 @@ jobs:
             nslookup ${{ secrets.BASTION_IP }} || true
           fi
 
-          echo "🔧 Attempting SSH connection..."
-          if timeout 30 ssh -i ~/.ssh/camp.pem -o ConnectTimeout=20 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR ec2-user@${{ secrets.BASTION_IP }} 'echo "✅ SSH connection successful"'; then
-            echo "✅ Bastion SSH connection test passed"
+          # SSH 연결 테스트 (짧은 타임아웃)
+          echo "🔧 Testing SSH connection (10s timeout)..."
+          if timeout 10 ssh -i ~/.ssh/camp.pem -o ConnectTimeout=5 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ec2-user@${{ secrets.BASTION_IP }} 'echo "✅ SSH connection successful"' 2>/dev/null; then
+            echo "✅ SSH connection successful - proceeding with SSH deployment"
+            echo "SSH_AVAILABLE=true" >> $GITHUB_ENV
           else
-            echo "❌ Bastion SSH connection test failed"
-            echo "🔧 Detailed diagnosis:"
-            echo "🔧 SSH key test:"
-            ssh-keygen -l -f ~/.ssh/camp.pem 2>&1 || echo "Key validation failed"
-            echo "🔧 Connection test with timeout:"
-            timeout 15 ssh -v -i ~/.ssh/camp.pem -o ConnectTimeout=10 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ec2-user@${{ secrets.BASTION_IP }} 'echo test' 2>&1 | head -10 || echo "SSH connection timed out"
-            exit 1
+            echo "❌ SSH connection failed - will try alternative deployment method"
+            echo "🔧 This might be due to GitHub Actions IP restrictions"
+            echo "SSH_AVAILABLE=false" >> $GITHUB_ENV
           fi
 
-      - name: 🚀 Deploy to Both Instances (SSH Strategy)
+      - name: 🚀 Deploy to Both Instances
         run: |
           echo "🔄 Starting deployment to both Blue and Green instances..."
 
-                    # Deploy to Blue Instance (AZ-A)
-          echo "📦 Deploying to Blue Instance..."
-          ssh -i ~/.ssh/camp.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ProxyJump=ec2-user@${{ secrets.BASTION_IP }} ec2-user@10.0.11.105 '
-            echo "🔄 Starting deployment on Blue instance..."
-            sudo systemctl stop empick-backend || true
-            cd /opt/empick
-            sudo -u springboot wget -O empick-backend.jar https://empick-bucket.s3.ap-northeast-2.amazonaws.com/releases/empick-backend-latest.jar
-            sudo chown springboot:springboot empick-backend.jar
-            sudo chmod +x empick-backend.jar
-            sudo systemctl start empick-backend
-            echo "✅ Deployment completed on Blue instance"
-          '
+          if [ "$SSH_AVAILABLE" = "true" ]; then
+            echo "📡 Using SSH deployment method..."
+            
+            # Deploy to Blue Instance (AZ-A)
+            echo "📦 Deploying to Blue Instance..."
+            ssh -i ~/.ssh/camp.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ProxyJump=ec2-user@${{ secrets.BASTION_IP }} ec2-user@10.0.11.105 '
+              echo "🔄 Starting deployment on Blue instance..."
+              sudo systemctl stop empick-backend || true
+              cd /opt/empick
+              sudo -u springboot wget -O empick-backend.jar https://empick-bucket.s3.ap-northeast-2.amazonaws.com/releases/empick-backend-latest.jar
+              sudo chown springboot:springboot empick-backend.jar
+              sudo chmod +x empick-backend.jar
+              sudo systemctl start empick-backend
+              echo "✅ Deployment completed on Blue instance"
+            '
 
-          # Deploy to Green Instance (AZ-C)  
-          echo "📦 Deploying to Green Instance..."
-          ssh -i ~/.ssh/camp.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ProxyJump=ec2-user@${{ secrets.BASTION_IP }} ec2-user@10.0.12.150 '
-            echo "🔄 Starting deployment on Green instance..."
-            sudo systemctl stop empick-backend || true
-            cd /opt/empick
-            sudo -u springboot wget -O empick-backend.jar https://empick-bucket.s3.ap-northeast-2.amazonaws.com/releases/empick-backend-latest.jar
-            sudo chown springboot:springboot empick-backend.jar
-            sudo chmod +x empick-backend.jar
-            sudo systemctl start empick-backend
-            echo "✅ Deployment completed on Green instance"
-          '
+            # Deploy to Green Instance (AZ-C)  
+            echo "📦 Deploying to Green Instance..."
+            ssh -i ~/.ssh/camp.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ProxyJump=ec2-user@${{ secrets.BASTION_IP }} ec2-user@10.0.12.150 '
+              echo "🔄 Starting deployment on Green instance..."
+              sudo systemctl stop empick-backend || true
+              cd /opt/empick
+              sudo -u springboot wget -O empick-backend.jar https://empick-bucket.s3.ap-northeast-2.amazonaws.com/releases/empick-backend-latest.jar
+              sudo chown springboot:springboot empick-backend.jar
+              sudo chmod +x empick-backend.jar
+              sudo systemctl start empick-backend
+              echo "✅ Deployment completed on Green instance"
+            '
+          else
+            echo "🔧 Using SSM deployment method (SSH unavailable)..."
+            
+            # Deploy to Blue Instance via SSM
+            echo "📦 Deploying to Blue Instance via SSM..."
+            aws ssm send-command \
+              --instance-ids ${{ secrets.BLUE_INSTANCE_ID }} \
+              --document-name "AWS-RunShellScript" \
+              --parameters 'commands=[
+                "echo \"🔄 Starting deployment on Blue instance...\"",
+                "sudo systemctl stop empick-backend || true",
+                "cd /opt/empick",
+                "sudo -u springboot wget -O empick-backend.jar https://empick-bucket.s3.ap-northeast-2.amazonaws.com/releases/empick-backend-latest.jar",
+                "sudo chown springboot:springboot empick-backend.jar",
+                "sudo chmod +x empick-backend.jar",
+                "sudo systemctl start empick-backend",
+                "echo \"✅ Deployment completed on Blue instance\""
+              ]' \
+              --output text
+
+            # Deploy to Green Instance via SSM
+            echo "📦 Deploying to Green Instance via SSM..."
+            aws ssm send-command \
+              --instance-ids ${{ secrets.GREEN_INSTANCE_ID }} \
+              --document-name "AWS-RunShellScript" \
+              --parameters 'commands=[
+                "echo \"🔄 Starting deployment on Green instance...\"",
+                "sudo systemctl stop empick-backend || true",
+                "cd /opt/empick",
+                "sudo -u springboot wget -O empick-backend.jar https://empick-bucket.s3.ap-northeast-2.amazonaws.com/releases/empick-backend-latest.jar",
+                "sudo chown springboot:springboot empick-backend.jar",
+                "sudo chmod +x empick-backend.jar",
+                "sudo systemctl start empick-backend",
+                "echo \"✅ Deployment completed on Green instance\""
+              ]' \
+              --output text
+              
+            echo "⏰ Waiting for SSM commands to complete..."
+            sleep 30
+          fi
 
       - name: ⏰ Wait for services to start
         run: |
