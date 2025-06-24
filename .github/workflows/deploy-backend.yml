@@ -65,22 +65,37 @@ jobs:
           echo "🔑 Setting up SSH key for deployment..."
           mkdir -p ~/.ssh
 
-                    # SSH 키를 안전하게 저장 (여러 방법 시도)
-          echo "🔧 Method 1: Direct echo with tr"
+                              # SSH 키를 안전하게 저장 (여러 방법 시도)
+          echo "🔧 Creating SSH key with multiple format attempts..."
           echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' > ~/.ssh/camp.pem
           chmod 600 ~/.ssh/camp.pem
 
-          # OpenSSL 3.0 호환성을 위한 키 형식 변환
-          echo "🔧 Converting key format for OpenSSL 3.0 compatibility..."
-          if openssl rsa -in ~/.ssh/camp.pem -out ~/.ssh/camp_converted.pem 2>/dev/null; then
-            echo "✅ Key conversion successful"
-            mv ~/.ssh/camp_converted.pem ~/.ssh/camp.pem
+          echo "🔧 Original key file size: $(wc -c < ~/.ssh/camp.pem) bytes"
+
+          # 여러 키 형식 변환 시도
+          echo "🔧 Attempting key format conversions..."
+
+          # 방법 1: OpenSSL RSA 변환
+          if openssl rsa -in ~/.ssh/camp.pem -out ~/.ssh/camp_rsa.pem 2>/dev/null; then
+            echo "✅ OpenSSL RSA conversion successful"
+            cp ~/.ssh/camp_rsa.pem ~/.ssh/camp.pem
             chmod 600 ~/.ssh/camp.pem
-          else
-            echo "⚠️ Key conversion failed, using original format"
           fi
 
-          echo "Final key file size: $(wc -c < ~/.ssh/camp.pem) bytes"
+          # 방법 2: PKCS#8 형식으로 변환
+          if openssl pkcs8 -topk8 -inform PEM -outform PEM -nocrypt -in ~/.ssh/camp.pem -out ~/.ssh/camp_pkcs8.pem 2>/dev/null; then
+            echo "✅ PKCS#8 conversion successful"
+            cp ~/.ssh/camp_pkcs8.pem ~/.ssh/camp.pem
+            chmod 600 ~/.ssh/camp.pem
+          fi
+
+          # 방법 3: ssh-keygen으로 OpenSSH 형식 변환
+          if ssh-keygen -p -m OpenSSH -N "" -f ~/.ssh/camp.pem 2>/dev/null; then
+            echo "✅ OpenSSH format conversion successful"
+          fi
+
+          echo "🔧 Final key file size: $(wc -c < ~/.ssh/camp.pem) bytes"
+          echo "🔧 Key file type: $(file ~/.ssh/camp.pem)"
 
           # SSH 키 검증
           echo "🔍 SSH key validation:"
@@ -105,6 +120,18 @@ jobs:
           fi
 
           ssh-keyscan -H ${{ secrets.BASTION_IP }} >> ~/.ssh/known_hosts
+
+          # SSH 에이전트 시작 및 키 추가 시도
+          echo "🔧 Starting SSH agent and adding key..."
+          eval $(ssh-agent -s)
+          if ssh-add ~/.ssh/camp.pem 2>/dev/null; then
+            echo "✅ SSH key added to agent successfully"
+            export SSH_AUTH_SOCK=$SSH_AUTH_SOCK
+            export SSH_AGENT_PID=$SSH_AGENT_PID
+          else
+            echo "⚠️ Failed to add key to SSH agent, using direct key file"
+          fi
+
           echo "🔍 SSH key setup completed"
 
       - name: 🧪 Test SSH Connection
