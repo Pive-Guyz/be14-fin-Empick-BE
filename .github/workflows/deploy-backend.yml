@@ -64,20 +64,43 @@ jobs:
         run: |
           echo "🔑 Setting up SSH key for deployment..."
           mkdir -p ~/.ssh
+
+          # SSH 키를 안전하게 저장 (여러 방법 시도)
+          echo "🔧 Method 1: Direct echo with tr"
           echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' > ~/.ssh/camp.pem
           chmod 600 ~/.ssh/camp.pem
+
+          # 첫 번째 시도 결과 확인
+          echo "First attempt - Key file size: $(wc -c < ~/.ssh/camp.pem) bytes"
+          if ! ssh-keygen -l -f ~/.ssh/camp.pem 2>/dev/null; then
+            echo "🔧 Method 2: Using printf with proper escaping"
+            printf '%s\n' "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/camp.pem
+            chmod 600 ~/.ssh/camp.pem
+            echo "Second attempt - Key file size: $(wc -c < ~/.ssh/camp.pem) bytes"
+          fi
 
           # SSH 키 검증
           echo "🔍 SSH key validation:"
           echo "Key file size: $(wc -c < ~/.ssh/camp.pem) bytes"
           echo "Key file first line: $(head -n1 ~/.ssh/camp.pem)"
           echo "Key file last line: $(tail -n1 ~/.ssh/camp.pem)"
+          echo "Key file line count: $(wc -l < ~/.ssh/camp.pem)"
 
-          # SSH 키 유효성 검사
-          if ssh-keygen -l -f ~/.ssh/camp.pem 2>/dev/null; then
+          # 파일 내용 hex dump (처음 50바이트)
+          echo "Key file hex dump (first 50 bytes):"
+          hexdump -C ~/.ssh/camp.pem | head -n 4
+
+          # SSH 키 유효성 검사 (상세 에러 출력)
+          echo "🔍 Running ssh-keygen validation..."
+          if ssh-keygen -l -f ~/.ssh/camp.pem; then
             echo "✅ SSH key is valid"
           else
             echo "❌ SSH key validation failed"
+            echo "🔧 Detailed error output:"
+            ssh-keygen -l -f ~/.ssh/camp.pem 2>&1 || true
+            echo "🔧 File permissions: $(ls -la ~/.ssh/camp.pem)"
+            echo "🔧 File type check:"
+            file ~/.ssh/camp.pem || true
             exit 1
           fi
 
