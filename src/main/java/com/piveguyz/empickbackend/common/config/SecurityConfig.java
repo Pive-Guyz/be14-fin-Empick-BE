@@ -49,6 +49,7 @@ public class SecurityConfig {
                                 "/swagger-ui.html",
                                 "/swagger-resources/**",
                                 "/webjars/**",
+                                "/actuator/health",         // ALB Health Check를 위한 추가
                                 "/api/v1/**"                // 테스트용으로 모든 경로 sequrity 처리 안되게
                         ).permitAll()
                         // ✅ 로그인/회원가입 경로는 인증 필요 없음

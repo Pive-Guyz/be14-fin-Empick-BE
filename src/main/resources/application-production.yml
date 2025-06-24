@@ -12,10 +12,9 @@ spring:
       minimum-idle: ${HIKARI_MIN_IDLE:5}
       idle-timeout: ${HIKARI_IDLE_TIMEOUT:60000}
       max-lifetime: ${HIKARI_MAX_LIFETIME:1800000}
-  
-  http:
-    encoding.
-  
+
+  http: encoding.
+
   jpa:
     generate-ddl: false
     show-sql: false
@@ -90,4 +89,5 @@ management:
         include: health,info,metrics
   endpoint:
     health:
-      show-details: when-authorized 
+      show-details: always
+      show-components: always
