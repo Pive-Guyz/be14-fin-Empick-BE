@@ -198,7 +198,7 @@ jobs:
               echo "🔄 Starting deployment on Blue instance..."
               sudo systemctl stop empick-backend || true
               cd /opt/empick
-              sudo -u springboot wget -O empick-backend.jar https://empick-bucket.s3.ap-northeast-2.amazonaws.com/releases/empick-backend-latest.jar
+              sudo -u springboot aws s3 cp s3://empick-bucket/releases/empick-backend-latest.jar /opt/empick/empick-backend.jar --region ap-northeast-2
               sudo chown springboot:springboot empick-backend.jar
               sudo chmod +x empick-backend.jar
               sudo systemctl start empick-backend
@@ -211,7 +211,7 @@ jobs:
               echo "🔄 Starting deployment on Green instance..."
               sudo systemctl stop empick-backend || true
               cd /opt/empick
-              sudo -u springboot wget -O empick-backend.jar https://empick-bucket.s3.ap-northeast-2.amazonaws.com/releases/empick-backend-latest.jar
+              sudo -u springboot aws s3 cp s3://empick-bucket/releases/empick-backend-latest.jar /opt/empick/empick-backend.jar --region ap-northeast-2
               sudo chown springboot:springboot empick-backend.jar
               sudo chmod +x empick-backend.jar
               sudo systemctl start empick-backend
@@ -234,7 +234,7 @@ jobs:
                   "echo \"🔄 Starting deployment on Blue instance...\"",
                   "sudo systemctl stop empick-backend || true",
                   "cd /opt/empick",
-                  "sudo -u springboot wget -O empick-backend.jar https://empick-bucket.s3.ap-northeast-2.amazonaws.com/releases/empick-backend-latest.jar",
+                  "sudo -u springboot aws s3 cp s3://empick-bucket/releases/empick-backend-latest.jar /opt/empick/empick-backend.jar --region ap-northeast-2",
                   "sudo chown springboot:springboot empick-backend.jar",
                   "sudo chmod +x empick-backend.jar",
                   "sudo systemctl start empick-backend",
@@ -251,7 +251,7 @@ jobs:
                   "echo \"🔄 Starting deployment on Green instance...\"",
                   "sudo systemctl stop empick-backend || true",
                   "cd /opt/empick",
-                  "sudo -u springboot wget -O empick-backend.jar https://empick-bucket.s3.ap-northeast-2.amazonaws.com/releases/empick-backend-latest.jar",
+                  "sudo -u springboot aws s3 cp s3://empick-bucket/releases/empick-backend-latest.jar /opt/empick/empick-backend.jar --region ap-northeast-2",
                   "sudo chown springboot:springboot empick-backend.jar",
                   "sudo chmod +x empick-backend.jar",
                   "sudo systemctl start empick-backend",
