@@ -141,7 +141,7 @@ jobs:
           echo "🔧 OpenSSL version: $(openssl version)"
 
           # SSH 연결 테스트 (더 관대한 옵션 사용)
-          echo "🔧 Testing network connectivity first..."
+                              echo "🔧 Testing network connectivity first..."
           if ping -c 2 -W 5 ${{ secrets.BASTION_IP }} >/dev/null 2>&1; then
             echo "✅ Network connectivity OK"
           else
@@ -167,7 +167,7 @@ jobs:
         run: |
           echo "🔄 Starting deployment to both Blue and Green instances..."
 
-          # Deploy to Blue Instance (AZ-A)
+                    # Deploy to Blue Instance (AZ-A)
           echo "📦 Deploying to Blue Instance..."
           ssh -i ~/.ssh/camp.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ProxyJump=ec2-user@${{ secrets.BASTION_IP }} ec2-user@10.0.11.105 '
             echo "🔄 Starting deployment on Blue instance..."
