@@ -65,19 +65,22 @@ jobs:
           echo "🔑 Setting up SSH key for deployment..."
           mkdir -p ~/.ssh
 
-          # SSH 키를 안전하게 저장 (여러 방법 시도)
+                    # SSH 키를 안전하게 저장 (여러 방법 시도)
           echo "🔧 Method 1: Direct echo with tr"
           echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' > ~/.ssh/camp.pem
           chmod 600 ~/.ssh/camp.pem
 
-          # 첫 번째 시도 결과 확인
-          echo "First attempt - Key file size: $(wc -c < ~/.ssh/camp.pem) bytes"
-          if ! ssh-keygen -l -f ~/.ssh/camp.pem 2>/dev/null; then
-            echo "🔧 Method 2: Using printf with proper escaping"
-            printf '%s\n' "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/camp.pem
+          # OpenSSL 3.0 호환성을 위한 키 형식 변환
+          echo "🔧 Converting key format for OpenSSL 3.0 compatibility..."
+          if openssl rsa -in ~/.ssh/camp.pem -out ~/.ssh/camp_converted.pem 2>/dev/null; then
+            echo "✅ Key conversion successful"
+            mv ~/.ssh/camp_converted.pem ~/.ssh/camp.pem
             chmod 600 ~/.ssh/camp.pem
-            echo "Second attempt - Key file size: $(wc -c < ~/.ssh/camp.pem) bytes"
+          else
+            echo "⚠️ Key conversion failed, using original format"
           fi
+
+          echo "Final key file size: $(wc -c < ~/.ssh/camp.pem) bytes"
 
           # SSH 키 검증
           echo "🔍 SSH key validation:"
@@ -111,14 +114,25 @@ jobs:
           echo "🔧 OpenSSL version: $(openssl version)"
 
           # SSH 연결 테스트 (더 관대한 옵션 사용)
-          if ssh -i ~/.ssh/camp.pem -o ConnectTimeout=15 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR ec2-user@${{ secrets.BASTION_IP }} 'echo "✅ SSH connection successful"'; then
+          echo "🔧 Testing network connectivity first..."
+          if ping -c 2 -W 5 ${{ secrets.BASTION_IP }} >/dev/null 2>&1; then
+            echo "✅ Network connectivity OK"
+          else
+            echo "⚠️ Network connectivity issue detected"
+            echo "🔧 Trying nslookup..."
+            nslookup ${{ secrets.BASTION_IP }} || true
+          fi
+
+          echo "🔧 Attempting SSH connection..."
+          if timeout 30 ssh -i ~/.ssh/camp.pem -o ConnectTimeout=20 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR ec2-user@${{ secrets.BASTION_IP }} 'echo "✅ SSH connection successful"'; then
             echo "✅ Bastion SSH connection test passed"
           else
             echo "❌ Bastion SSH connection test failed"
-            echo "🔧 Trying with verbose output..."
-            ssh -v -i ~/.ssh/camp.pem -o ConnectTimeout=15 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ec2-user@${{ secrets.BASTION_IP }} 'echo test' 2>&1 | head -20 || true
-            echo "🔧 Checking network connectivity..."
-            ping -c 3 ${{ secrets.BASTION_IP }} || true
+            echo "🔧 Detailed diagnosis:"
+            echo "🔧 SSH key test:"
+            ssh-keygen -l -f ~/.ssh/camp.pem 2>&1 || echo "Key validation failed"
+            echo "🔧 Connection test with timeout:"
+            timeout 15 ssh -v -i ~/.ssh/camp.pem -o ConnectTimeout=10 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ec2-user@${{ secrets.BASTION_IP }} 'echo test' 2>&1 | head -10 || echo "SSH connection timed out"
             exit 1
           fi
 
