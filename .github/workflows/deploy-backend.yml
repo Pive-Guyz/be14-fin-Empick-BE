@@ -63,9 +63,10 @@ jobs:
         run: |
           echo "🔑 Setting up SSH key for deployment..."
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/camp.pem
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' > ~/.ssh/camp.pem
           chmod 600 ~/.ssh/camp.pem
           ssh-keyscan -H ${{ secrets.BASTION_IP }} >> ~/.ssh/known_hosts
+          echo "🔍 SSH key setup completed"
 
       - name: 🚀 Deploy to Both Instances (SSH Strategy)
         run: |
@@ -73,7 +74,7 @@ jobs:
 
           # Deploy to Blue Instance (AZ-A)
           echo "📦 Deploying to Blue Instance..."
-          ssh -i ~/.ssh/camp.pem -o ProxyJump=ec2-user@${{ secrets.BASTION_IP }} ec2-user@10.0.11.105 '
+          ssh -i ~/.ssh/camp.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ProxyJump=ec2-user@${{ secrets.BASTION_IP }} ec2-user@10.0.11.105 '
             echo "🔄 Starting deployment on Blue instance..."
             sudo systemctl stop empick-backend || true
             cd /opt/empick
@@ -86,7 +87,7 @@ jobs:
 
           # Deploy to Green Instance (AZ-C)  
           echo "📦 Deploying to Green Instance..."
-          ssh -i ~/.ssh/camp.pem -o ProxyJump=ec2-user@${{ secrets.BASTION_IP }} ec2-user@10.0.12.150 '
+          ssh -i ~/.ssh/camp.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ProxyJump=ec2-user@${{ secrets.BASTION_IP }} ec2-user@10.0.12.150 '
             echo "🔄 Starting deployment on Green instance..."
             sudo systemctl stop empick-backend || true
             cd /opt/empick
