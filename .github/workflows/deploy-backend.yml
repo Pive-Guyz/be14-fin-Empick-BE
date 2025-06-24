@@ -65,8 +65,35 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' > ~/.ssh/camp.pem
           chmod 600 ~/.ssh/camp.pem
+
+          # SSH 키 검증
+          echo "🔍 SSH key validation:"
+          echo "Key file size: $(wc -c < ~/.ssh/camp.pem) bytes"
+          echo "Key file first line: $(head -n1 ~/.ssh/camp.pem)"
+          echo "Key file last line: $(tail -n1 ~/.ssh/camp.pem)"
+
+          # SSH 키 유효성 검사
+          if ssh-keygen -l -f ~/.ssh/camp.pem 2>/dev/null; then
+            echo "✅ SSH key is valid"
+          else
+            echo "❌ SSH key validation failed"
+            exit 1
+          fi
+
           ssh-keyscan -H ${{ secrets.BASTION_IP }} >> ~/.ssh/known_hosts
           echo "🔍 SSH key setup completed"
+
+      - name: 🧪 Test SSH Connection
+        run: |
+          echo "🧪 Testing SSH connection to Bastion..."
+          if ssh -i ~/.ssh/camp.pem -o ConnectTimeout=10 -o StrictHostKeyChecking=no ec2-user@${{ secrets.BASTION_IP }} 'echo "✅ SSH connection successful"'; then
+            echo "✅ Bastion SSH connection test passed"
+          else
+            echo "❌ Bastion SSH connection test failed"
+            echo "🔧 Trying to diagnose the issue..."
+            ssh -v -i ~/.ssh/camp.pem -o ConnectTimeout=10 -o StrictHostKeyChecking=no ec2-user@${{ secrets.BASTION_IP }} 'echo test' || true
+            exit 1
+          fi
 
       - name: 🚀 Deploy to Both Instances (SSH Strategy)
         run: |
