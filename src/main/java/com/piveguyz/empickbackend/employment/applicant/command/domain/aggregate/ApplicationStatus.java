@@ -4,10 +4,9 @@ public enum ApplicationStatus {
     WAITING(0, "서류검토대기중"),
     PASSED_DOCS(1, "서류합격"),
     PASSED_PRACTICAL(2, "실무합격"),
-    PASSED_INTERVIEW_1(3, "1차면접합격"),
-    PASSED_INTERVIEW_2(4, "2차면접합격"),
-    PASSED_FINAL(5, "최종합격"),
-    REJECTED(6, "불합격");
+    PASSED_INTERVIEW(3, "면접합격"),
+    PASSED_FINAL(4, "최종합격"),
+    REJECTED(5, "불합격");
 
     private final int code;
     private final String description;

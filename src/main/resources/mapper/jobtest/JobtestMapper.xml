@@ -27,6 +27,8 @@
         <result property="score" column="score"/>
         <result property="content" column="q_content"/>
         <result property="optionNumber" column="option_number"/>
+        <result property="type" column="q_type"
+                typeHandler="com.piveguyz.empickbackend.employment.jobtests.common.typehandler.QuestionTypeHandler"/>
         <result property="difficulty" column="q_difficulty"
                 typeHandler="com.piveguyz.empickbackend.common.handler.JobtestDifficultyHandler"/>
         <result property="questionId" column="question_id"/>
@@ -121,6 +123,7 @@
                jtq.option_number,
                jtq.question_id,
 
+               q.type            AS q_type,
                q.difficulty            AS q_difficulty,
                q.content               AS q_content,
 
