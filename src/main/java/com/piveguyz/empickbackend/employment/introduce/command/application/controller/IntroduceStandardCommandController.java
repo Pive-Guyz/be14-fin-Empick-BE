@@ -19,7 +19,7 @@ public class IntroduceStandardCommandController {
     private final IntroduceStandardCommandService introduceStandardCommandService;
 
     @PostMapping
-    @Operation(summary = "자기소개서 기준표 등록", description = "자기소개서 기준표을 등록한다.")
+    @Operation(summary = "자기소개서 기준표 등록", description = "자기소개서 기준표을 등록합니다.")
     public ResponseEntity<CustomApiResponse<
             IntroduceStandardCommandDTO>> create(@RequestBody IntroduceStandardCommandDTO dto) {
         IntroduceStandardCommandDTO created = introduceStandardCommandService.create(dto);
@@ -27,7 +27,7 @@ public class IntroduceStandardCommandController {
                 .body(CustomApiResponse.of(ResponseCode.SUCCESS, created));
     }
 
-    @Operation(summary = "자기소개서 평가 기준표 삭제", description = "자기소개서 평가 기준표를 ID로 삭제합니다.")
+    @Operation(summary = "자기소개서 기준표 삭제", description = "자기소개서 기준표를 삭제합니다.")
     @DeleteMapping("/{id}")
     public ResponseEntity<CustomApiResponse<Integer>> delete(@PathVariable int id) {
         int deletedId = introduceStandardCommandService.delete(id);

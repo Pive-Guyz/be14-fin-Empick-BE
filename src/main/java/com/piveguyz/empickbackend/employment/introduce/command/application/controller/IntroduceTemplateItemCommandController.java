@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "자기소개서 템플릿 항목 API", description = "자기소개서 템플릿 항목 관련 API")
+@Tag(name = "자기소개서 API", description = "자기소개서 관련 API")
 @RestController
 @RequestMapping("/api/v1/employment/introduce-template-item")
 @RequiredArgsConstructor
@@ -21,7 +21,7 @@ public class IntroduceTemplateItemCommandController {
     private final IntroduceTemplateItemCommandService introduceTemplateItemCommandService;
 
     @PostMapping
-    @Operation(summary = "템플릿 항목 등록", description = "자기소개서 템플릿 항목을 등록한다.")
+    @Operation(summary = "자기소개서 템플릿 항목 등록", description = "자기소개서 템플릿 항목을 등록합니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "등록 성공"),
             @ApiResponse(responseCode = "500", description = "서버 오류")
@@ -34,7 +34,7 @@ public class IntroduceTemplateItemCommandController {
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "템플릿 항목 삭제", description = "자기소개서 템플릿 항목을 삭제한다.")
+    @Operation(summary = "자기소개서 템플릿 항목 삭제", description = "자기소개서 템플릿 항목을 삭제합니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "삭제 성공"),
             @ApiResponse(responseCode = "404", description = "템플릿 항목을 찾을 수 없음"),

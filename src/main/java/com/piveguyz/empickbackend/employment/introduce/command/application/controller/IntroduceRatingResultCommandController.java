@@ -20,7 +20,7 @@ public class IntroduceRatingResultCommandController {
 
     private final IntroduceRatingResultCommandService introduceRatingResultCommandService;
 
-    @Operation(summary = "자기소개서 평가 결과 등록", description = "자기소개서 평가 결과를 등록한다.")
+    @Operation(summary = "자기소개서 평가 결과 등록", description = "자기소개서 평가 결과를 등록합니다.")
     @PostMapping
     public ResponseEntity<CustomApiResponse<IntroduceRatingResultCreateCommandDTO>> create(
             @RequestBody IntroduceRatingResultCreateCommandDTO dto) {
@@ -29,7 +29,7 @@ public class IntroduceRatingResultCommandController {
                 .body(CustomApiResponse.of(ResponseCode.SUCCESS, createdDTO));
     }
 
-    @Operation(summary = "자기소개서 평가 결과 수정", description = "자기소개서 평가 결과를 수정한다.")
+    @Operation(summary = "자기소개서 평가 결과 수정", description = "자기소개서 평가 결과를 수정합니다.")
     @PatchMapping("/{id}")
     public ResponseEntity<CustomApiResponse<IntroduceRatingResultUpdateCommandDTO>> update(
             @PathVariable int id,
@@ -39,7 +39,7 @@ public class IntroduceRatingResultCommandController {
                 .body((CustomApiResponse.of(ResponseCode.SUCCESS, updateDTO)));
     }
 
-    @Operation(summary = "자기소개서 평가 결과 삭제", description = "자기소개서 평가 결과를 삭제한다.")
+    @Operation(summary = "자기소개서 평가 결과 삭제", description = "자기소개서 평가 결과를 삭제합니다.")
     @DeleteMapping("/{id}")
     public ResponseEntity<CustomApiResponse<Integer>> delete(@PathVariable int id) {
         int deletedId = introduceRatingResultCommandService.delete(id);

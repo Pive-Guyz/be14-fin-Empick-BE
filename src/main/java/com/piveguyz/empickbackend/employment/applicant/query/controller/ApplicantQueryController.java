@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name = "지원자 조회 API", description = "지원자 조회에 대한 기능 제공")
+@Tag(name = "지원자,지원서 API", description = "지원자,지원서 관련 API")
 @RestController
 @RequestMapping("api/v1/employment/applicant")
 @RequiredArgsConstructor
@@ -25,7 +25,7 @@ public class ApplicantQueryController {
 
     private final ApplicantQueryService applicantQueryService;
 
-    @Operation(summary = "지원자 전체 조회", description = "지원자 목록 전체를 조회합니다.")
+    @Operation(summary = "지원자 전체 조회", description = "지원자 전체를 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "요청이 성공적으로 처리되었습니다."),
             @ApiResponse(responseCode = "400", description = "잘못된 요청입니다."),
@@ -37,7 +37,7 @@ public class ApplicantQueryController {
                 .body(CustomApiResponse.of(ResponseCode.SUCCESS, applicantQueryService.findAllApplicant()));
     }
 
-    @Operation(summary = "지원자 단건 조회", description = "ID로 특정 지원자의 정보를 조회합니다.")
+    @Operation(summary = "지원자 단건 조회", description = "지원자 단건을 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "요청이 성공적으로 처리되었습니다."),
             @ApiResponse(responseCode = "404", description = "지원자를 찾을 수 없습니다."),
@@ -51,7 +51,7 @@ public class ApplicantQueryController {
                 .body(CustomApiResponse.of(result, dto));
     }
 
-    @Operation(summary = "이름으로 지원자 검색", description = "이름 일부 또는 전체로 지원자들을 검색합니다.")
+    @Operation(summary = "이름으로 지원자 조회", description = "이름 일부 또는 전체로 지원자들을 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "검색 결과 조회 성공"),
             @ApiResponse(responseCode = "400", description = "검색어가 올바르지 않거나 누락되었습니다.")

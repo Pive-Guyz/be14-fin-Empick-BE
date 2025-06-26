@@ -19,7 +19,7 @@ public class RecruitmentStatusScheduler {
 
 	private final RecruitmentRepository recruitmentRepository;
 
-	@Scheduled(cron = "0 0 * * * *") // 매시 정각 실행
+	@Scheduled(cron = "0 * * * * *") // 매분 0초에 실행
 	@Transactional
 	public void updateRecruitmentStatuses() {
 		LocalDateTime now = LocalDateTime.now();

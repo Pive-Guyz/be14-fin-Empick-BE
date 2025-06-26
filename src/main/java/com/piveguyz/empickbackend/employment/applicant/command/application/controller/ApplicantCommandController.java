@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "지원자 생성/수정/삭제 API", description = "지원자 등록, 수정, 삭제 API")
+@Tag(name = "지원자,지원서 API", description = "지원자,지원서 관련 API")
 @RestController
 @RequestMapping("/api/v1/employment/applicant")
 @RequiredArgsConstructor
@@ -21,7 +21,7 @@ public class ApplicantCommandController {
     private final ApplicantCommandService applicantCommandService;
 
     // 지원자 등록
-    @Operation(summary = "지원자 등록", description = "지원자를 새로 등록합니다.")
+    @Operation(summary = "지원자 등록", description = "지원자를 등록합니다.")
     @ApiResponses(value = {})
     @PostMapping("/create")
     public ResponseEntity<CustomApiResponse<ApplicantCommandDTO>> createApplicant(

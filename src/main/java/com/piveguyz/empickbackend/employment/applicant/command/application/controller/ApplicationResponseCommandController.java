@@ -17,13 +17,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/employment/application-response")
-@Tag(name = "application-response", description = "지원서 항목별 응답 API")
+@Tag(name = "지원자,지원서 API", description = "지원자,지원서 관련 API")
 public class ApplicationResponseCommandController {
 
     private final ApplicationResponseCommandService applicationResponseCommandService;
 
     @PostMapping
-    @Operation(summary = "지원서 항목 응답 등록", description = "지원자가 작성한 항목별 응답을 등록합니다.")
+    @Operation(summary = "지원서 항목별 응답 등록", description = "지원서 항목별 응답을 등록합니다.")
     public ResponseEntity<CustomApiResponse<ApplicationResponseCommandDTO>> createApplicationResponse(
             @RequestBody @Valid ApplicationResponseCommandDTO dto
     ) {

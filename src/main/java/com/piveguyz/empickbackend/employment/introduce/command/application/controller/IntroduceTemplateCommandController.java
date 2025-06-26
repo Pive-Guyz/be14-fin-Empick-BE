@@ -19,7 +19,7 @@ public class IntroduceTemplateCommandController {
 
     private final IntroduceTemplateCommandService introduceTemplateCommandService;
 
-    @Operation(summary = "자기소개서 템플릿 등록", description = "자기소개서 템플릿을 등록합니다")
+    @Operation(summary = "자기소개서 템플릿 등록", description = "자기소개서 템플릿을 등록합니다.")
     @PostMapping
     public ResponseEntity<CustomApiResponse<IntroduceTemplateCommandDTO>> create(
             @RequestBody @Valid IntroduceTemplateCommandDTO dto) {
@@ -29,7 +29,7 @@ public class IntroduceTemplateCommandController {
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "자기소개서 템플릿 삭제", description = "자기소개서 템플릿을 삭제한다.")
+    @Operation(summary = "자기소개서 템플릿 삭제", description = "자기소개서 템플릿을 삭제합니다.")
 
     public ResponseEntity<CustomApiResponse<Integer>> delete(@PathVariable int id) {
         int deletedId = introduceTemplateCommandService.delete(id);

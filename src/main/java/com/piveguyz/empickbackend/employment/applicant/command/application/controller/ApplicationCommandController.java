@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "지원서 API", description = "지원서관련 API")
+@Tag(name = "지원자,지원서 API", description = "지원자,지원서 관련 API")
 @RestController
 @RequestMapping("/api/v1/employment/application")
 @RequiredArgsConstructor
@@ -46,9 +46,9 @@ public class ApplicationCommandController {
     }
 
     @PatchMapping("/{id}")
-    @Operation(summary = "지원서 상태 변경", description = "변경하고자 하는 지원서 id와 status를 입력하세요.")
+    @Operation(summary = "지원서 수정", description = "지원서를 수정합니다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "상태 변경 성공"),
+            @ApiResponse(responseCode = "200", description = "수정 성공"),
             @ApiResponse(responseCode = "404", description = "지원서 없음"),
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
@@ -64,7 +64,7 @@ public class ApplicationCommandController {
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "지원서 삭제", description = "지원서 ID에 해당하는 지원서를 삭제합니다.")
+    @Operation(summary = "지원서 삭제", description = "지원서를 삭제합니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "지원서 삭제 성공"),
             @ApiResponse(responseCode = "404", description = "지원서 없음"),

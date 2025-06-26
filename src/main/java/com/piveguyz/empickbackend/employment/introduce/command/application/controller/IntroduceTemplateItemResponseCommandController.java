@@ -18,13 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/employment/introduce-template-item-response")
 @RequiredArgsConstructor
-@Tag(name = "자기소개서 템플릿 항목 응답", description = "자기소개서 템플릿 항목별 응답 관련 API")
+@Tag(name = "자기소개서 API", description = "자기소개서 관련 API")
 public class IntroduceTemplateItemResponseCommandController {
 
     private final IntroduceTemplateItemResponseCommandService introduceTemplateItemResponseCommandService;
 
     @PostMapping
-    @Operation(summary = "자기소개서 템플릿 항목 응답 등록", description = "자기소개서 템플릿 항목별 응답을 등록합니다.")
+    @Operation(summary = "자기소개서 템플릿 항목별 응답 등록", description = "자기소개서 템플릿 항목별 응답을 등록합니다.")
     public ResponseEntity<CustomApiResponse<IntroduceTemplateItemResponseCommandDTO>>
     createIntroduceTemplateItemResponse(@RequestBody @Valid IntroduceTemplateItemResponseCommandDTO dto) {
 

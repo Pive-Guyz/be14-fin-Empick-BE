@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@Tag(name = "ApplicantBookmark", description = "북마크 지원자 조회 API")
+@Tag(name = "지원자,지원서 API", description = "지원자,지원서 관련 API")
 @RestController
 @RequestMapping("api/v1/employment/applicant-bookmark")
 @RequiredArgsConstructor
@@ -25,7 +25,7 @@ public class ApplicantBookmarkQueryController {
 
     private final ApplicantBookmarkQueryService applicantBookmarkQueryService;
 
-    @Operation(summary = "북마크 지원자 전체 조회", description = "북마크 지원자 목록 전체를 조회합니다.")
+    @Operation(summary = "북마크 지원자 전체 조회", description = "북마크 지원자의 전체를 조회합니다.")
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "요청이 성공적으로 처리되었습니다."),
@@ -39,7 +39,7 @@ public class ApplicantBookmarkQueryController {
                 .body(CustomApiResponse.of(ResponseCode.SUCCESS, applicantBookmarkQueryService.findAllApplicantBookmark()));
     }
 
-    @Operation(summary = "북마크 지원자 상세 조회", description = "북마크 지원자 중 한명을 상세조회합니다.")
+    @Operation(summary = "북마크 지원자 단견 조회", description = "북마크 지원자 단건을 조회합니다.")
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "요청이 성공적으로 처리되었습니다."),
