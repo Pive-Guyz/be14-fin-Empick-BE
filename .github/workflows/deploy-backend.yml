@@ -1,5 +1,5 @@
 name: Deploy Backend to VPC2 (Simple Strategy)
-# v.0.0.5
+# v.0.0.6
 on:
   push:
     branches: [release]
@@ -65,7 +65,7 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/camp.pem
           chmod 600 ~/.ssh/camp.pem
-          ssh-keyscan -H ${{ secrets.BASTION_HOST }} >> ~/.ssh/known_hosts
+          ssh-keyscan -t rsa,ecdsa,ed25519 ${{ secrets.BASTION_HOST }} >> ~/.ssh/known_hosts
 
           # SSH config for easier connection
           cat >> ~/.ssh/config << EOF
@@ -74,6 +74,9 @@ jobs:
             User ec2-user
             IdentityFile ~/.ssh/camp.pem
             StrictHostKeyChecking no
+            UserKnownHostsFile ~/.ssh/known_hosts
+            ConnectTimeout 30
+            ServerAliveInterval 60
             
           Host blue-instance
             HostName ${{ secrets.BLUE_PRIVATE_IP }}
@@ -81,6 +84,9 @@ jobs:
             ProxyCommand ssh -W %h:%p bastion
             IdentityFile ~/.ssh/camp.pem
             StrictHostKeyChecking no
+            UserKnownHostsFile ~/.ssh/known_hosts
+            ConnectTimeout 30
+            ServerAliveInterval 60
             
           Host green-instance
             HostName ${{ secrets.GREEN_PRIVATE_IP }}
@@ -88,7 +94,20 @@ jobs:
             ProxyCommand ssh -W %h:%p bastion
             IdentityFile ~/.ssh/camp.pem
             StrictHostKeyChecking no
+            UserKnownHostsFile ~/.ssh/known_hosts
+            ConnectTimeout 30
+            ServerAliveInterval 60
           EOF
+
+          # Test SSH connection
+          echo "🔍 Testing SSH connection to bastion..."
+          ssh -o ConnectTimeout=10 bastion "echo 'Bastion connection successful'"
+
+          echo "🔍 Testing SSH connection to Blue instance..."
+          ssh -o ConnectTimeout=10 blue-instance "echo 'Blue instance connection successful'"
+
+          echo "🔍 Testing SSH connection to Green instance..."
+          ssh -o ConnectTimeout=10 green-instance "echo 'Green instance connection successful'"
 
       - name: 🔧 Update Environment Variables
         run: |
