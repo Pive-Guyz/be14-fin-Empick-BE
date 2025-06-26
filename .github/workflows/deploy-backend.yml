@@ -1,5 +1,5 @@
 name: Deploy Backend to VPC2 (Simple Strategy)
-# v.0.0.11
+# v.0.0.12
 on:
   push:
     branches: [release]
@@ -281,15 +281,20 @@ jobs:
         run: |
           echo "🏥 Performing health checks..."
 
-          # ALB Health Check (최종 확인)
+          # ALB Health Check (최종 확인) - 올바른 /health 엔드포인트 사용
+          HEALTH_CHECK_URL="${{ secrets.ALB_URL }}/health"
+          echo "🔍 Using health check URL: $HEALTH_CHECK_URL"
+
           for i in {1..12}; do
             echo "🔍 Health check attempt $i/12..."
-            if curl -f -s ${{ secrets.ALB_HEALTH_CHECK_URL }}; then
+            if curl -f -s "$HEALTH_CHECK_URL"; then
               echo "✅ ALB Health check passed!"
               break
             fi
             if [ $i -eq 12 ]; then
               echo "❌ Health check failed after 12 attempts"
+              echo "🔧 Debug: Trying to access health endpoint directly..."
+              curl -v "$HEALTH_CHECK_URL" || true
               exit 1
             fi
             sleep 15
@@ -307,7 +312,7 @@ jobs:
           echo "✅ Health Check: SUCCESS"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           echo "🌐 Application URL: ${{ secrets.ALB_URL }}"
-          echo "🏥 Health Check: ${{ secrets.ALB_HEALTH_CHECK_URL }}"
+          echo "🏥 Health Check: ${{ secrets.ALB_URL }}/health"
           echo "📊 API Endpoint: ${{ secrets.ALB_URL }}/api"
 
       - name: ❌ Deployment Failed
