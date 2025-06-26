@@ -1,5 +1,5 @@
 name: Deploy Backend to VPC2 (Simple Strategy)
-# 0.0.4
+# v.0.0.5
 on:
   push:
     branches: [release]
@@ -65,7 +65,30 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/camp.pem
           chmod 600 ~/.ssh/camp.pem
-          ssh-keyscan -H ${{ secrets.BASTION_IP }} >> ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ secrets.BASTION_HOST }} >> ~/.ssh/known_hosts
+
+          # SSH config for easier connection
+          cat >> ~/.ssh/config << EOF
+          Host bastion
+            HostName ${{ secrets.BASTION_HOST }}
+            User ec2-user
+            IdentityFile ~/.ssh/camp.pem
+            StrictHostKeyChecking no
+            
+          Host blue-instance
+            HostName ${{ secrets.BLUE_PRIVATE_IP }}
+            User ec2-user
+            ProxyCommand ssh -W %h:%p bastion
+            IdentityFile ~/.ssh/camp.pem
+            StrictHostKeyChecking no
+            
+          Host green-instance
+            HostName ${{ secrets.GREEN_PRIVATE_IP }}
+            User ec2-user
+            ProxyCommand ssh -W %h:%p bastion
+            IdentityFile ~/.ssh/camp.pem
+            StrictHostKeyChecking no
+          EOF
 
       - name: 🔧 Update Environment Variables
         run: |
@@ -103,7 +126,7 @@ jobs:
 
           # Update Blue Instance Environment
           echo "📦 Updating Blue Instance environment..."
-          ssh -i ~/.ssh/camp.pem -o ProxyJump=ec2-user@${{ secrets.BASTION_IP }} ec2-user@${{ secrets.BLUE_PRIVATE_IP }} "
+          ssh blue-instance "
             echo '🔧 Updating environment variables on Blue instance...'
             sudo bash -c 'cat > /opt/empick/.env << \"EOF\"
           $ENV_CONTENT
@@ -115,7 +138,7 @@ jobs:
 
           # Update Green Instance Environment
           echo "📦 Updating Green Instance environment..."
-          ssh -i ~/.ssh/camp.pem -o ProxyJump=ec2-user@${{ secrets.BASTION_IP }} ec2-user@${{ secrets.GREEN_PRIVATE_IP }} "
+          ssh green-instance "
             echo '🔧 Updating environment variables on Green instance...'
             sudo bash -c 'cat > /opt/empick/.env << \"EOF\"
           $ENV_CONTENT
@@ -131,7 +154,7 @@ jobs:
 
           # Deploy to Blue Instance (AZ-A)
           echo "📦 Deploying to Blue Instance..."
-          ssh -i ~/.ssh/camp.pem -o ProxyJump=ec2-user@${{ secrets.BASTION_IP }} ec2-user@${{ secrets.BLUE_PRIVATE_IP }} '
+          ssh blue-instance '
             echo "🔄 Starting deployment on Blue instance..."
             sudo systemctl stop empick-backend || true
             cd /opt/empick
@@ -144,7 +167,7 @@ jobs:
 
           # Deploy to Green Instance (AZ-C)  
           echo "📦 Deploying to Green Instance..."
-          ssh -i ~/.ssh/camp.pem -o ProxyJump=ec2-user@${{ secrets.BASTION_IP }} ec2-user@${{ secrets.GREEN_PRIVATE_IP }} '
+          ssh green-instance '
             echo "🔄 Starting deployment on Green instance..."
             sudo systemctl stop empick-backend || true
             cd /opt/empick
