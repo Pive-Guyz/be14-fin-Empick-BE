@@ -1,5 +1,5 @@
 name: Deploy Backend to VPC2 (Simple Strategy)
-# v.0.0.6
+# v.0.0.7
 on:
   push:
     branches: [release]
@@ -65,49 +65,75 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/camp.pem
           chmod 600 ~/.ssh/camp.pem
-          ssh-keyscan -t rsa,ecdsa,ed25519 ${{ secrets.BASTION_HOST }} >> ~/.ssh/known_hosts
+
+          # Debug: Check if BASTION_HOST is set
+          echo "🔍 Bastion Host: ${{ secrets.BASTION_HOST }}"
+
+          # Add bastion host to known_hosts (with error handling)
+          if [ -n "${{ secrets.BASTION_HOST }}" ]; then
+            echo "📡 Adding bastion host to known_hosts..."
+            ssh-keyscan -t rsa,ecdsa,ed25519 ${{ secrets.BASTION_HOST }} >> ~/.ssh/known_hosts || echo "⚠️ ssh-keyscan failed, continuing with StrictHostKeyChecking=no"
+          else
+            echo "⚠️ BASTION_HOST secret is not set!"
+            exit 1
+          fi
 
           # SSH config for easier connection
+          echo "🔧 Creating SSH config..."
           cat >> ~/.ssh/config << EOF
+          # Global SSH settings
+          Host *
+            StrictHostKeyChecking no
+            UserKnownHostsFile ~/.ssh/known_hosts
+            ConnectTimeout 30
+            ServerAliveInterval 60
+            ServerAliveCountMax 3
+            
           Host bastion
             HostName ${{ secrets.BASTION_HOST }}
             User ec2-user
             IdentityFile ~/.ssh/camp.pem
-            StrictHostKeyChecking no
-            UserKnownHostsFile ~/.ssh/known_hosts
-            ConnectTimeout 30
-            ServerAliveInterval 60
             
           Host blue-instance
             HostName ${{ secrets.BLUE_PRIVATE_IP }}
             User ec2-user
-            ProxyCommand ssh -W %h:%p bastion
+            ProxyCommand ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -W %h:%p bastion
             IdentityFile ~/.ssh/camp.pem
-            StrictHostKeyChecking no
-            UserKnownHostsFile ~/.ssh/known_hosts
-            ConnectTimeout 30
-            ServerAliveInterval 60
             
           Host green-instance
             HostName ${{ secrets.GREEN_PRIVATE_IP }}
             User ec2-user
-            ProxyCommand ssh -W %h:%p bastion
+            ProxyCommand ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -W %h:%p bastion
             IdentityFile ~/.ssh/camp.pem
-            StrictHostKeyChecking no
-            UserKnownHostsFile ~/.ssh/known_hosts
-            ConnectTimeout 30
-            ServerAliveInterval 60
           EOF
 
-          # Test SSH connection
+          echo "📋 SSH config created:"
+          cat ~/.ssh/config
+
+                    # Test SSH connection
           echo "🔍 Testing SSH connection to bastion..."
-          ssh -o ConnectTimeout=10 bastion "echo 'Bastion connection successful'"
+          if ssh -o ConnectTimeout=10 -o BatchMode=yes bastion "echo 'Bastion connection successful'"; then
+            echo "✅ Bastion connection successful"
+          else
+            echo "❌ Bastion connection failed"
+            exit 1
+          fi
 
           echo "🔍 Testing SSH connection to Blue instance..."
-          ssh -o ConnectTimeout=10 blue-instance "echo 'Blue instance connection successful'"
+          if ssh -o ConnectTimeout=10 -o BatchMode=yes blue-instance "echo 'Blue instance connection successful'"; then
+            echo "✅ Blue instance connection successful"
+          else
+            echo "❌ Blue instance connection failed"
+            exit 1
+          fi
 
           echo "🔍 Testing SSH connection to Green instance..."
-          ssh -o ConnectTimeout=10 green-instance "echo 'Green instance connection successful'"
+          if ssh -o ConnectTimeout=10 -o BatchMode=yes green-instance "echo 'Green instance connection successful'"; then
+            echo "✅ Green instance connection successful"
+          else
+            echo "❌ Green instance connection failed"
+            exit 1
+          fi
 
       - name: 🔧 Update Environment Variables
         run: |
