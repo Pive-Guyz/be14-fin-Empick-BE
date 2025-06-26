@@ -2,7 +2,7 @@ name: Deploy Backend to VPC2 (Simple Strategy)
 
 on:
   push:
-    branches: [main]
+    branches: [release]
     paths:
       - "src/**"
       - "build.gradle"
@@ -67,6 +67,64 @@ jobs:
           chmod 600 ~/.ssh/camp.pem
           ssh-keyscan -H ${{ secrets.BASTION_IP }} >> ~/.ssh/known_hosts
 
+      - name: 🔧 Update Environment Variables
+        run: |
+          echo "🔧 Updating environment variables on both instances..."
+
+          # Create environment file content
+          ENV_CONTENT="# Server Configuration
+          SERVER_PORT=8080
+
+          # Database Configuration
+          DB_HOST=${{ secrets.DB_HOST }}
+          DB_PORT=${{ secrets.DB_PORT }}
+          DB_NAME=${{ secrets.DB_NAME }}
+          DB_USERNAME=${{ secrets.DB_USERNAME }}
+          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+
+          # Redis Configuration
+          REDIS_HOST=${{ secrets.REDIS_HOST }}
+          REDIS_PORT=${{ secrets.REDIS_PORT }}
+
+          # JWT Configuration
+          JWT_SECRET=${{ secrets.JWT_SECRET }}
+
+          # Email Configuration
+          MAIL_HOST=${{ secrets.MAIL_HOST }}
+          MAIL_PORT=587
+          MAIL_USERNAME=${{ secrets.MAIL_USERNAME }}
+          MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}
+
+          # AWS S3 Configuration
+          AWS_S3_BUCKET=${{ secrets.S3_BUCKET }}
+          AWS_S3_REGION=ap-northeast-2
+          AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+
+          # Update Blue Instance Environment
+          echo "📦 Updating Blue Instance environment..."
+          ssh -i ~/.ssh/camp.pem -o ProxyJump=ec2-user@${{ secrets.BASTION_IP }} ec2-user@10.0.11.105 "
+            echo '🔧 Updating environment variables on Blue instance...'
+            sudo bash -c 'cat > /opt/empick/.env << \"EOF\"
+          $ENV_CONTENT
+          EOF'
+            sudo chown springboot:springboot /opt/empick/.env
+            sudo chmod 600 /opt/empick/.env
+            echo '✅ Environment variables updated on Blue instance'
+          "
+
+          # Update Green Instance Environment
+          echo "📦 Updating Green Instance environment..."
+          ssh -i ~/.ssh/camp.pem -o ProxyJump=ec2-user@${{ secrets.BASTION_IP }} ec2-user@10.0.12.150 "
+            echo '🔧 Updating environment variables on Green instance...'
+            sudo bash -c 'cat > /opt/empick/.env << \"EOF\"
+          $ENV_CONTENT
+          EOF'
+            sudo chown springboot:springboot /opt/empick/.env
+            sudo chmod 600 /opt/empick/.env
+            echo '✅ Environment variables updated on Green instance'
+          "
+
       - name: 🚀 Deploy to Both Instances (SSH Strategy)
         run: |
           echo "🔄 Starting deployment to both Blue and Green instances..."
@@ -126,6 +184,7 @@ jobs:
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           echo "✅ JAR Build: SUCCESS"
           echo "✅ S3 Upload: SUCCESS" 
+          echo "✅ Environment Update: SUCCESS"
           echo "✅ Blue Instance Deploy: SUCCESS"
           echo "✅ Green Instance Deploy: SUCCESS"
           echo "✅ Health Check: SUCCESS"
@@ -139,7 +198,7 @@ jobs:
         run: |
           echo "❌ Deployment failed!"
           echo "🔧 Troubleshooting steps:"
-          echo "1. Check AWS SSM Run Command status"
-          echo "2. SSH to instances and check logs: sudo journalctl -u empick-backend -f"
-          echo "3. Verify S3 bucket permissions"
-          echo "4. Check EC2 IAM roles for S3 access"
+          echo "1. Check environment variables: cat /opt/empick/.env"
+          echo "2. Check service logs: sudo journalctl -u empick-backend -f"
+          echo "3. Verify DB connection: mysql -h ${{ secrets.DB_HOST }} -u ${{ secrets.DB_USERNAME }} -p"
+          echo "4. Check JAR file: ls -la /opt/empick/empick-backend.jar"
