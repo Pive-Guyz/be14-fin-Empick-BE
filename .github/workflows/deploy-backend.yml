@@ -1,5 +1,5 @@
 name: Deploy Backend to VPC2 (Simple Strategy)
-# v.0.0.7
+# v.0.0.8
 on:
   push:
     branches: [release]
@@ -203,9 +203,26 @@ jobs:
             echo "🔄 Starting deployment on Blue instance..."
             sudo systemctl stop empick-backend || true
             cd /opt/empick
-            sudo -u springboot wget -O empick-backend.jar https://${{ secrets.S3_BUCKET }}.s3.ap-northeast-2.amazonaws.com/releases/empick-backend-latest.jar
+            
+            # Remove old JAR file
+            sudo rm -f empick-backend.jar
+            
+            # Download new JAR file using AWS CLI (more reliable than wget)
+            sudo -u springboot aws s3 cp s3://${{ secrets.S3_BUCKET }}/releases/empick-backend-latest.jar empick-backend.jar
+            
+            # Set proper permissions
             sudo chown springboot:springboot empick-backend.jar
             sudo chmod +x empick-backend.jar
+            
+            # Verify file was downloaded successfully
+            if [ -f empick-backend.jar ]; then
+              echo "✅ JAR file downloaded successfully"
+              ls -la empick-backend.jar
+            else
+              echo "❌ JAR file download failed"
+              exit 1
+            fi
+            
             sudo systemctl start empick-backend
             echo "✅ Deployment completed on Blue instance"
           '
@@ -216,9 +233,26 @@ jobs:
             echo "🔄 Starting deployment on Green instance..."
             sudo systemctl stop empick-backend || true
             cd /opt/empick
-            sudo -u springboot wget -O empick-backend.jar https://${{ secrets.S3_BUCKET }}.s3.ap-northeast-2.amazonaws.com/releases/empick-backend-latest.jar
+            
+            # Remove old JAR file
+            sudo rm -f empick-backend.jar
+            
+            # Download new JAR file using AWS CLI (more reliable than wget)
+            sudo -u springboot aws s3 cp s3://${{ secrets.S3_BUCKET }}/releases/empick-backend-latest.jar empick-backend.jar
+            
+            # Set proper permissions
             sudo chown springboot:springboot empick-backend.jar
             sudo chmod +x empick-backend.jar
+            
+            # Verify file was downloaded successfully
+            if [ -f empick-backend.jar ]; then
+              echo "✅ JAR file downloaded successfully"
+              ls -la empick-backend.jar
+            else
+              echo "❌ JAR file download failed"
+              exit 1
+            fi
+            
             sudo systemctl start empick-backend
             echo "✅ Deployment completed on Green instance"
           '
@@ -227,6 +261,21 @@ jobs:
         run: |
           echo "⏰ Waiting 60 seconds for services to start..."
           sleep 60
+
+          echo "🔍 Checking service status on both instances..."
+
+          # Check Blue instance service status
+          echo "📊 Blue instance service status:"
+          ssh blue-instance "sudo systemctl status empick-backend --no-pager -l" || true
+
+          # Check Green instance service status  
+          echo "📊 Green instance service status:"
+          ssh green-instance "sudo systemctl status empick-backend --no-pager -l" || true
+
+          # Check if services are listening on port 8080
+          echo "🔍 Checking if services are listening on port 8080..."
+          ssh blue-instance "sudo netstat -tlnp | grep :8080 || echo 'Blue instance not listening on port 8080'" || true
+          ssh green-instance "sudo netstat -tlnp | grep :8080 || echo 'Green instance not listening on port 8080'" || true
 
       - name: 🏥 Health Check
         run: |
