@@ -46,14 +46,17 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())    // CSRF 끄기
                 .authorizeHttpRequests(auth -> auth
 
-                                // ✅ 인증이 필요 없는 경로
+                                // ✅ 인증이 필요 없는 경로 - Actuator 우선 처리
+                                .requestMatchers("/actuator/**").permitAll()                // Actuator 엔드포인트 (Health Check용) - 최우선
+                                .requestMatchers("/health").permitAll()                     // 사용자 정의 Health Check 엔드포인트
+                                
+                                // ✅ 기타 인증이 필요 없는 경로
                                 .requestMatchers(
                                         "/v3/api-docs/**",
                                         "/swagger-ui/**",
                                         "/swagger-ui.html",
                                         "/swagger-resources/**",
                                         "/webjars/**",
-                                        "/actuator/**",                         // Actuator 엔드포인트 (Health Check용)
                                         "/api/v1/auth/**",                      // 로그인/회원가입
                                         "/api/v1/employment/jobtests/exam/**",  // 실무테스트 응시 관련
                                         "/api/v1/employment/answers/**",        // 실무테스트 답안 제출

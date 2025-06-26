@@ -39,6 +39,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
+        // Actuator 엔드포인트와 사용자 정의 Health Check는 JWT 검증 제외
+        String requestURI = request.getRequestURI();
+        if (requestURI != null && (requestURI.startsWith("/actuator") || requestURI.equals("/health"))) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String authHeader = request.getHeader("Authorization");
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);

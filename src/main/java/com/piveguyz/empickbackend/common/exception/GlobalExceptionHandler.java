@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.piveguyz.empickbackend.common.response.CustomApiResponse;
 import com.piveguyz.empickbackend.common.response.ResponseCode;
 import io.swagger.v3.oas.annotations.Hidden;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,8 @@ import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.Objects;
 
@@ -82,9 +85,19 @@ public class GlobalExceptionHandler {
 
     /**
      * 그 외 모든 예외 처리 (예기치 않은 에러)
+     * Actuator 엔드포인트는 제외
      */
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<CustomApiResponse<Void>> handleException(Exception ex) {
+    public ResponseEntity<CustomApiResponse<Void>> handleException(Exception ex) throws Exception {
+        // Actuator 엔드포인트인 경우 예외를 다시 throw하여 Spring Boot가 처리하도록 함
+        ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+        HttpServletRequest request = attr.getRequest();
+        String requestURI = request.getRequestURI();
+        
+        if (requestURI != null && requestURI.startsWith("/actuator")) {
+            throw ex; // Actuator는 Spring Boot가 직접 처리하도록 함
+        }
+        
         ex.printStackTrace(); // 로그로 남기기
         return ResponseEntity.status(ResponseCode.INTERNAL_SERVER_ERROR.getHttpStatus()).body(CustomApiResponse.of(ResponseCode.INTERNAL_SERVER_ERROR));
     }

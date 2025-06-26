@@ -1,5 +1,5 @@
 name: Deploy Backend to VPC2 (Simple Strategy)
-# v.0.0.9
+# v.0.0.10
 on:
   push:
     branches: [release]
