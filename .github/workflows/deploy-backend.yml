@@ -1,5 +1,5 @@
 name: Deploy Backend to VPC2 (Simple Strategy)
-# 0.0.2
+# 0.0.3
 on:
   push:
     branches: [release]
@@ -12,7 +12,7 @@ on:
 env:
   AWS_REGION: ap-northeast-2
   JAVA_VERSION: 17
-  S3_BUCKET: empick-bucket
+  S3_BUCKET: ${{ secrets.S3_BUCKET }}
   S3_KEY: releases/empick-backend-latest.jar
 
 jobs:
@@ -103,7 +103,7 @@ jobs:
 
           # Update Blue Instance Environment
           echo "📦 Updating Blue Instance environment..."
-          ssh -i ~/.ssh/camp.pem -o ProxyJump=ec2-user@${{ secrets.BASTION_IP }} ec2-user@10.0.11.105 "
+          ssh -i ~/.ssh/camp.pem -o ProxyJump=ec2-user@${{ secrets.BASTION_IP }} ec2-user@${{ secrets.BLUE_PRIVATE_IP }} "
             echo '🔧 Updating environment variables on Blue instance...'
             sudo bash -c 'cat > /opt/empick/.env << \"EOF\"
           $ENV_CONTENT
@@ -115,7 +115,7 @@ jobs:
 
           # Update Green Instance Environment
           echo "📦 Updating Green Instance environment..."
-          ssh -i ~/.ssh/camp.pem -o ProxyJump=ec2-user@${{ secrets.BASTION_IP }} ec2-user@10.0.12.150 "
+          ssh -i ~/.ssh/camp.pem -o ProxyJump=ec2-user@${{ secrets.BASTION_IP }} ec2-user@${{ secrets.GREEN_PRIVATE_IP }} "
             echo '🔧 Updating environment variables on Green instance...'
             sudo bash -c 'cat > /opt/empick/.env << \"EOF\"
           $ENV_CONTENT
@@ -131,11 +131,11 @@ jobs:
 
           # Deploy to Blue Instance (AZ-A)
           echo "📦 Deploying to Blue Instance..."
-          ssh -i ~/.ssh/camp.pem -o ProxyJump=ec2-user@${{ secrets.BASTION_IP }} ec2-user@10.0.11.105 '
+          ssh -i ~/.ssh/camp.pem -o ProxyJump=ec2-user@${{ secrets.BASTION_IP }} ec2-user@${{ secrets.BLUE_PRIVATE_IP }} '
             echo "🔄 Starting deployment on Blue instance..."
             sudo systemctl stop empick-backend || true
             cd /opt/empick
-            sudo -u springboot wget -O empick-backend.jar https://empick-bucket.s3.ap-northeast-2.amazonaws.com/releases/empick-backend-latest.jar
+            sudo -u springboot wget -O empick-backend.jar https://${{ secrets.S3_BUCKET }}.s3.ap-northeast-2.amazonaws.com/releases/empick-backend-latest.jar
             sudo chown springboot:springboot empick-backend.jar
             sudo chmod +x empick-backend.jar
             sudo systemctl start empick-backend
@@ -144,11 +144,11 @@ jobs:
 
           # Deploy to Green Instance (AZ-C)  
           echo "📦 Deploying to Green Instance..."
-          ssh -i ~/.ssh/camp.pem -o ProxyJump=ec2-user@${{ secrets.BASTION_IP }} ec2-user@10.0.12.150 '
+          ssh -i ~/.ssh/camp.pem -o ProxyJump=ec2-user@${{ secrets.BASTION_IP }} ec2-user@${{ secrets.GREEN_PRIVATE_IP }} '
             echo "🔄 Starting deployment on Green instance..."
             sudo systemctl stop empick-backend || true
             cd /opt/empick
-            sudo -u springboot wget -O empick-backend.jar https://empick-bucket.s3.ap-northeast-2.amazonaws.com/releases/empick-backend-latest.jar
+            sudo -u springboot wget -O empick-backend.jar https://${{ secrets.S3_BUCKET }}.s3.ap-northeast-2.amazonaws.com/releases/empick-backend-latest.jar
             sudo chown springboot:springboot empick-backend.jar
             sudo chmod +x empick-backend.jar
             sudo systemctl start empick-backend
