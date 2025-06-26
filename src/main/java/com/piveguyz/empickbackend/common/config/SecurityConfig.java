@@ -53,6 +53,7 @@ public class SecurityConfig {
                                         "/swagger-ui.html",
                                         "/swagger-resources/**",
                                         "/webjars/**",
+                                        "/actuator/**",                         // Actuator 엔드포인트 (Health Check용)
                                         "/api/v1/auth/**",                      // 로그인/회원가입
                                         "/api/v1/employment/jobtests/exam/**",  // 실무테스트 응시 관련
                                         "/api/v1/employment/answers/**",        // 실무테스트 답안 제출
