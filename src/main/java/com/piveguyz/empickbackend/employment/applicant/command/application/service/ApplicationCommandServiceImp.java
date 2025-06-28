@@ -1,21 +1,25 @@
 package com.piveguyz.empickbackend.employment.applicant.command.application.service;
 
+import java.time.LocalDateTime;
+
+import org.springframework.stereotype.Service;
+
 import com.piveguyz.empickbackend.common.exception.BusinessException;
 import com.piveguyz.empickbackend.common.response.ResponseCode;
 import com.piveguyz.empickbackend.employment.applicant.command.application.dto.ApplicationCommandDTO;
 import com.piveguyz.empickbackend.employment.applicant.command.application.mapper.ApplicationCommandMapper;
 import com.piveguyz.empickbackend.employment.applicant.command.domain.aggregate.ApplicationEntity;
 import com.piveguyz.empickbackend.employment.applicant.command.domain.repository.ApplicationRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import com.piveguyz.empickbackend.employment.introduce.command.domain.repository.IntroduceRatingResultRepository;
 
-import java.time.LocalDateTime;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class ApplicationCommandServiceImp implements ApplicationCommandService {
 
     private final ApplicationRepository applicationRepository;
+    private final IntroduceRatingResultRepository introduceRatingResultRepository;
 
     @Override
     public ApplicationCommandDTO register(ApplicationCommandDTO dto) {
@@ -45,17 +49,25 @@ public class ApplicationCommandServiceImp implements ApplicationCommandService {
 
         System.out.println("📋 기존 entity: status=" + entity.getStatus() + ", introduceRatingResultId=" + entity.getIntroduceRatingResultId());
 
-        // 2. 새로운 매퍼 메서드를 사용하여 업데이트
+        // 2. 자기소개서 평가 결과 ID가 유효한지 검증
+        if (dto.getIntroduceRatingResultId() != null) {
+            boolean exists = introduceRatingResultRepository.existsById(dto.getIntroduceRatingResultId());
+            if (!exists) {
+                throw new BusinessException(ResponseCode.INTRODUCE_RATING_RESULT_NOT_FOUND);
+            }
+        }
+
+        // 3. 새로운 매퍼 메서드를 사용하여 업데이트
         ApplicationCommandMapper.updateFromDTO(entity, dto, 1);
 
         System.out.println("📋 업데이트 후 entity: status=" + entity.getStatus() + ", introduceRatingResultId=" + entity.getIntroduceRatingResultId());
 
-        // 3. 저장
+        // 4. 저장
         ApplicationEntity updated = applicationRepository.save(entity);
 
         System.out.println("✅ Application 업데이트 완료: " + updated.getId());
 
-        // 4. entity → dto 변환 후 반환
+        // 5. entity → dto 변환 후 반환
         return ApplicationCommandMapper.toDTO(updated);
     }
 
