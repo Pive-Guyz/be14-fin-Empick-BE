@@ -12,10 +12,9 @@ spring:
       minimum-idle: ${HIKARI_MIN_IDLE:5}
       idle-timeout: ${HIKARI_IDLE_TIMEOUT:60000}
       max-lifetime: ${HIKARI_MAX_LIFETIME:1800000}
-  
-  http:
-    encoding.
-  
+
+  http: encoding.
+
   jpa:
     generate-ddl: false
     show-sql: false
@@ -83,11 +82,11 @@ logging:
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
 
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,metrics
-  endpoint:
-    health:
-      show-details: when-authorized 
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: health,info,metrics,prometheus
+#  endpoint:
+#    health:
+#      show-details: when-authorized
