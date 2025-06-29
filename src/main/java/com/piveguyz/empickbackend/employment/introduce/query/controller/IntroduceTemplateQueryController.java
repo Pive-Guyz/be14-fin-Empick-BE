@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@Tag(name = "자기소개서 템플릿 조회 API", description = "자기소개서 템플릿 관련 조회 기능을 제공합니다.")
+@Tag(name = "자기소개서 API", description = "자기소개서 관련 API")
 @RestController
 @RequestMapping("/api/v1/employment/introduce-template")
 @RequiredArgsConstructor
@@ -26,7 +26,7 @@ public class IntroduceTemplateQueryController {
 
     private final IntroduceTemplateQueryService introduceTemplateQueryService;
 
-    @Operation(summary = "자기소개서 템플릿 전체 조회", description = "자기소개서 템플릿을 조회합니다")
+    @Operation(summary = "자기소개서 템플릿 전체 조회", description = "자기소개서 템플릿을 전체 조회합니다.")
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공적으로 조회됨"),
@@ -41,7 +41,7 @@ public class IntroduceTemplateQueryController {
                         findAllIntroduceTemplate()));
     }
 
-    @Operation(summary = "자기소개서 템플릿 항목 전체 조회", description = "자기소개서 템플릿 항목을 조회합니다")
+    @Operation(summary = "자기소개서 템플릿 항목 전체 조회", description = "자기소개서 템플릿 항목을 전체 조회합니다.")
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공적으로 조회됨"),
@@ -55,7 +55,7 @@ public class IntroduceTemplateQueryController {
                         introduceTemplateQueryService.findAllIntroduceTemplateItem()));
     }
 
-    @Operation(summary = "템플릿 상세 조회", description = "템플릿 ID로 템플릿 정보를 조회합니다.")
+    @Operation(summary = "자기소개서 템플릿 id로 조회", description = "자기소개서 템플릿을 id로 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "조회 성공"),
             @ApiResponse(responseCode = "404", description = "템플릿을 찾을 수 없음")

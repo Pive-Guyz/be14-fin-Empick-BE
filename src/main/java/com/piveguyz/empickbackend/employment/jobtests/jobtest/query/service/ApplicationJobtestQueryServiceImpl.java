@@ -3,6 +3,7 @@ package com.piveguyz.empickbackend.employment.jobtests.jobtest.query.service;
 import com.piveguyz.empickbackend.common.exception.BusinessException;
 import com.piveguyz.empickbackend.common.response.ResponseCode;
 import com.piveguyz.empickbackend.employment.jobtests.jobtest.command.application.dto.JobtestEntryRequestDTO;
+import com.piveguyz.empickbackend.employment.jobtests.jobtest.query.dto.ApplicationJobtestAnswerPageDTO;
 import com.piveguyz.empickbackend.employment.jobtests.jobtest.query.dto.ApplicationJobtestRequestDTO;
 import com.piveguyz.empickbackend.employment.jobtests.jobtest.query.dto.ApplicationJobtestResponseDTO;
 import com.piveguyz.empickbackend.employment.jobtests.jobtest.query.mapper.ApplicationJobtestMapper;
@@ -45,6 +46,11 @@ public class ApplicationJobtestQueryServiceImpl implements ApplicationJobtestQue
     @Override
     public ApplicationJobtestResponseDTO getApplicationJobtestByApplicationId(int applicationId) {
         return applicationJobtestMapper.selectByApplicationId(applicationId);
+    }
+
+    @Override
+    public ApplicationJobtestAnswerPageDTO getApplicationJobtest(int id) {
+        return applicationJobtestMapper.selectById(id);
     }
 
 }

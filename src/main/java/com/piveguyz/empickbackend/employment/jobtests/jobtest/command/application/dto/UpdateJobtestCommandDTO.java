@@ -20,5 +20,5 @@ public class UpdateJobtestCommandDTO {
 
     private int updatedMemberId;
 
-    private List<UpdateJobtestQuestionCommandDTO> jobtestQuestions;
+    private List<CreateJobtestQuestionCommandDTO> jobtestQuestions;
 }

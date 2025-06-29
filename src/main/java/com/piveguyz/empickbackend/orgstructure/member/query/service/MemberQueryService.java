@@ -17,4 +17,6 @@ public interface MemberQueryService {
     List<MemberRoleQueryDTO> getMemberRoles(int memberId);
 
     List<MemberResponseDTO> findAllMembers();
+
+    MemberResponseDTO getMemberById(Integer id);
 }

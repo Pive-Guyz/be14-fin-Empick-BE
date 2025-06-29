@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "지원자 북마크 등록/삭제 API", description = "지원자를 북마크에 등록, 삭제합니다.")
+@Tag(name = "지원자,지원서 API", description = "지원자 지원서 관련 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/v1/employment/applicant-bookmark")
@@ -21,7 +21,7 @@ public class ApplicantBookmarkCommandController {
 
     private final ApplicantBookmarkCommandService applicantBookmarkCommandService;
 
-    @Operation(summary = "북마크 등록", description = "지원자를 북마크합니다.")
+    @Operation(summary = "지원자 북마크 등록", description = "지원자를 북마크에 등록합니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "북마크 등록 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 요청"),
@@ -35,7 +35,7 @@ public class ApplicantBookmarkCommandController {
                 .body(CustomApiResponse.of(ResponseCode.SUCCESS, result));
     }
 
-    @Operation(summary = "지원자 북마크 삭제", description = "사용자 ID와 지원자 ID로 북마크를 삭제합니다.")
+    @Operation(summary = "지원자 북마크 삭제", description = "지원자를 북마크에서 삭제합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "북마크 삭제 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 요청"),

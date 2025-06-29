@@ -119,4 +119,27 @@
         WHERE m.employee_number = #{employeeNumber}
     </select>
 
+    <select id="getMemberById" parameterType="int"
+            resultType="com.piveguyz.empickbackend.orgstructure.member.query.dto.MemberResponseDTO">
+        SELECT m.id
+             , m.employee_number AS employeeNumber
+             , m.name
+             , m.email
+             , m.phone
+             , d.name            AS departmentName
+             , p.name            AS positionName
+             , j.name            AS jobName
+             , rnk.name          AS rankName
+             , m.picture_url     AS pictureUrl
+             , m.status
+             , m.hire_at         AS hireAt
+             , m.resign_at       AS resignAt
+        FROM member m
+                 LEFT JOIN department d ON m.department_id = d.id
+                 LEFT JOIN position p ON m.position_id = p.id
+                 LEFT JOIN job j ON m.job_id = j.id
+                 LEFT JOIN rank rnk ON m.rank_id = rnk.id
+        WHERE m.id = #{id}
+    </select>
+
 </mapper>

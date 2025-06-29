@@ -177,11 +177,12 @@ public enum ResponseCode {
     EMPLOYMENT_QUESTION_USED_IN_JOBTEST(false, HttpStatus.BAD_REQUEST, 2419, "해당 문제는 실무 테스트에서 사용 중입니다."),
 
     //   2) 실무테스트
-    EMPLOYMENT_JOBTEST_DELETE_CONFLICT(false, HttpStatus.CONFLICT, 2420, "이 실무테스트는 다른 곳에서 사용중이므로 수정하거나 삭제할 수 없습니다."),
+    EMPLOYMENT_JOBTEST_DELETE_CONFLICT(false, HttpStatus.CONFLICT, 2420, "이 실무테스트는 다른 곳에서 사용중이므로 삭제할 수 없습니다."),
     EMPLOYMENT_JOBTEST_DUPLICATE(false, HttpStatus.CONFLICT, 2421, "동일한 이름의 실무테스트가 이미 등록되어 있습니다."),
     EMPLOYMENT_INVALID_JOBTEST(false, HttpStatus.NOT_FOUND, 2422, "요청한 실무테스트를 찾을 수 없습니다."),
     EMPLOYMENT_INVALID_JOBTEST_QUESTION(false, HttpStatus.NOT_FOUND, 2423, "이 실무테스트에는 해당 문제가 등록되어 있지 않습니다."),
     EMPLOYMENT_JOBTEST_QUESTION_DUPLICATE(false, HttpStatus.CONFLICT, 2424, "이 실무테스트에는 해당 문제가 이미 등록되어 있습니다."),
+    EMPLOYMENT_JOBTEST_UPDATE_CONFLICT(false, HttpStatus.CONFLICT, 2425, "이 실무테스트는 다른 곳에서 사용중이므로 수정할 수 없습니다."),
 
     //   3) 지원서별 실무테스트
     EMPLOYMENT_INVALID_ENTRY_CODE(false, HttpStatus.BAD_REQUEST, 2300, "입장 코드는 5자리 숫자여야 합니다."),

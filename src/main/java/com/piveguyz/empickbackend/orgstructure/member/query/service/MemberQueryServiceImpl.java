@@ -62,6 +62,15 @@ public class MemberQueryServiceImpl implements MemberQueryService {
     }
 
     @Override
+    public MemberResponseDTO getMemberById(Integer id) {
+        MemberResponseDTO dto = memberMapper.getMemberById(id);
+        if(dto == null) {
+            throw new BusinessException(ResponseCode.MEMBER_NOT_FOUND);
+        }
+        return dto;
+    }
+
+    @Override
     public String getProfileImageKey(int memberId) {
         MemberResponseDTO member = memberMapper.findMemberById(memberId);
         if (member == null) {

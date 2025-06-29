@@ -18,12 +18,12 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/employment/introduce-result")
-@Tag(name = "자기소개서 평가 결과", description = "자소서 평가 결과 API")
+@Tag(name = "자기소개서 API", description = "자기소개서 관련 API")
 public class IntroduceResultQueryController {
 
     private final IntroduceResultQueryService introduceResultQueryService;
 
-    @Operation(summary = "자기소개서 평가 결과 전체 조회", description = "introduce_rating_result 전체 조회 API")
+    @Operation(summary = "자기소개서 평가 결과표 전체 조회", description = "자기소개서 평가 결과표를 전체 조회합니다.")
 
     @GetMapping
     public ResponseEntity<CustomApiResponse<List<IntroduceResultQueryDTO>>> getAllIntroduceResults() {
@@ -32,7 +32,7 @@ public class IntroduceResultQueryController {
 
     }
 
-    @Operation(summary = "평가 결과 ID로 조회", description = "특정 평가 결과의 상세 정보 조회")
+    @Operation(summary = "자기소개서 평가 결과표 id로 조회", description = "자기소개서 평가 결과표를 id로 조회합니다.")
     @GetMapping("/{id}")
     public ResponseEntity<CustomApiResponse<IntroduceResultQueryDTO>> getIntroduceResultById(
             @PathVariable Integer id) {

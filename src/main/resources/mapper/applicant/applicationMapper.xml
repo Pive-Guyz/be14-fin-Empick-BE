@@ -14,6 +14,10 @@
         <result property="interviewId" column="interview_id"/>
         <result property="updatedAt" column="updated_at"/>
         <result property="updatedBy" column="updated_by"/>
+
+        <result property="applicationJobtestId" column="ajt_id"/>
+        <result property="jobtestGradingScore" column="ajt_score"/>
+        <result property="jobtestGradingStatus" column="ajt_grading_status" typeHandler="com.piveguyz.empickbackend.common.handler.JobtestStatusHandler"/>
     </resultMap>
 
     <select id="findAllApplication" resultMap="ApplicationResultMap">
@@ -42,12 +46,16 @@
             a.applicant_id,
             a.introduce_rating_result_id,
             a.updated_at,
-            a.updated_by
+            a.updated_by,
+            ajt.id AS ajt_id,
+            ajt.grading_total_score AS ajt_score,
+            ajt.grading_status AS ajt_grading_status
         FROM application a
                  LEFT JOIN recruitment r ON a.recruitment_id = r.id
                  LEFT JOIN applicant ap ON a.applicant_id = ap.id
                  LEFT JOIN introduce_rating_result irr ON a.introduce_rating_result_id = irr.id
                  LEFT JOIN member m ON a.updated_by = m.id
+                LEFT JOIN application_job_test ajt ON ajt.application_id = a.id
         WHERE a.id = #{id}
     </select>
 

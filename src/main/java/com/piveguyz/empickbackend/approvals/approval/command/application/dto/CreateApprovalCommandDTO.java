@@ -17,7 +17,11 @@ public class CreateApprovalCommandDTO {
 
     private Integer approvalId;   // 취소 대상 결재 id
 
-    @Getter @Setter
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
     public static class ApprovalContentDTO {
         private Integer itemId;
         private String content;

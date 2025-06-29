@@ -10,6 +10,7 @@ import com.piveguyz.empickbackend.employment.jobtests.jobtest.query.service.Jobt
 import com.piveguyz.empickbackend.facade.JobtestFacade;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -29,8 +30,9 @@ public class JobtestQueryController {
     @Operation(
             summary = "전체 실무테스트 조회",
             description = """
-                     전체 실무테스트를 조회합니다.
-                    """
+                    전체 실무테스트를 조회합니다.
+                    """,
+            security = @SecurityRequirement(name = "bearerAuth")
     )
     @GetMapping
     public ResponseEntity<CustomApiResponse<List<JobtestQuestionListQueryDTO>>> getAllApplicationJobTests() {
@@ -43,8 +45,9 @@ public class JobtestQueryController {
     @Operation(
             summary = "실무테스트 상세 조회",
             description = """
-                     id에 해당하는 실무테스트를 조회합니다.
-                    """
+                    id에 해당하는 실무테스트를 조회합니다.
+                    """,
+            security = @SecurityRequirement(name = "bearerAuth")
     )
     @GetMapping("/{id}")
     public ResponseEntity<CustomApiResponse<JobtestQueryDTO>> getJobTestById(@PathVariable int id) {
@@ -56,8 +59,11 @@ public class JobtestQueryController {
     @Operation(
             summary = "실무테스트 입장 & 시험 정보 반환",
             description = """
+                    지원자에게 할당한 입장 코드를 입력하면 실무테스트에 입장할 수 있습니다.
+                    입장할 때 시험 정보를 함께 반환해 저장합니다.
                     실무테스트 입장 검증 후 입장 / 시험 정보 반환
-                    """
+                    """,
+            security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses(value = {
     })

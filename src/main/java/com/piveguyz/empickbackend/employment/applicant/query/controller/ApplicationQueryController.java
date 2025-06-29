@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@Tag(name = "Application", description = "지원서 조회 API")
+@Tag(name = "지원자,지원서 API", description = "지원자,지원서 관련 API")
 @RestController
 @RequestMapping("/api/v1/employment/application")
 @RequiredArgsConstructor
@@ -27,7 +27,7 @@ public class ApplicationQueryController {
 
     private final ApplicationQueryService applicationQueryService;
 
-    @Operation(summary = "전체 지원서 조회", description = "지원서 전체를 조회합니다.")
+    @Operation(summary = "지원서 전체 조회", description = "지원서 전체를 조회합니다.")
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "요청이 성공적으로 처리되었습니다."),
@@ -42,7 +42,7 @@ public class ApplicationQueryController {
     }
 
     @GetMapping("{id}")
-    @Operation(summary = "지원서 단건 조회", description = "지원서 ID로 단건 조회")
+    @Operation(summary = "지원서 단건 조회", description = "지원서의 단건을 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "조회 성공"),
             @ApiResponse(responseCode = "404", description = "해당 ID 없음")

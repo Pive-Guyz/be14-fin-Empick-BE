@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@Tag(name = "자기소개서 템플릿 항목별 응답 조회 API", description = "자기소개서 템플릿 항목별 응답에 관련 조회 기능을 제공합니다.")
+@Tag(name = "자기소개서 API", description = "자기소개서 관련 API")
 @RestController
 @RequestMapping("/api/v1/employment/introduce-template-item-response")
 @RequiredArgsConstructor
@@ -23,7 +23,7 @@ public class IntroduceTemplateItemResponseQueryController {
     private final IntroduceTemplateItemResponseQueryService introduceTemplateItemResponseQueryService;
 
     @Operation(summary = "자기소개서 템플릿 항목별 응답 전체 조회",
-            description = "모든 자기소개서 템플릿 항목별 응답을 조회합니다.")
+            description = "자기소개서 템플릿 항목별 응답을 전체 조회합니다.")
 
     @GetMapping
     public ResponseEntity<CustomApiResponse<List<IntroduceTemplateItemResponseQueryDTO>>>

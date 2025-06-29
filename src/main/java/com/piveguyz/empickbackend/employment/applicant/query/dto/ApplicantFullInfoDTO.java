@@ -60,4 +60,8 @@ public class ApplicantFullInfoDTO {
     // 수정한 사원의 memberId (nullable, 시스템 처리일 수도 있음)
     private Integer updatedBy;
 
+    // 실무테스트 할당 관련
+    private Integer applicationJobtestId;
+    private String applicationJobtestTitle;
+
 }

@@ -76,5 +76,30 @@
     </select>
 
 
+    <resultMap id="ApplicationJobTestMap"
+               type="com.piveguyz.empickbackend.employment.jobtests.jobtest.query.dto.ApplicationJobtestAnswerPageDTO">
+        <result column="application_job_test_id" property="applicationJobTestId"/>
+        <result column="applicant_name" property="applicantName"/>
+        <result column="recruitment_title" property="recruitmentTitle"/>
+        <result column="applicant_id" property="applicantId"/>
+        <result column="application_id" property="applicationId"/>
+        <result column="job_test_title" property="jobtestTitle"/>
+        <result column="submitted_at" property="submittedAt"/>
+    </resultMap>
 
+    <select id="selectById" resultMap="ApplicationJobTestMap">
+        SELECT ajt.id   AS application_job_test_id,
+               a.id     AS application_id,
+               a.applicant_id,
+               ap.name  AS applicant_name,
+               r.title  AS recruitment_title,
+               jt.title AS job_test_title,
+               ajt.submitted_at
+        FROM application_job_test ajt
+                 LEFT JOIN application a ON ajt.application_id = a.id
+                 LEFT JOIN applicant ap ON a.applicant_id = ap.id
+                 LEFT JOIN recruitment r ON a.recruitment_id = r.id
+                 LEFT JOIN job_test jt ON ajt.job_test_id = jt.id
+        WHERE ajt.id = #{id}
+    </select>
 </mapper>

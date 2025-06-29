@@ -210,4 +210,10 @@ public class MemberQueryController {
         List<MemberRoleQueryDTO> memberRoles = memberQueryService.getMemberRoles(employeeNumber);
         return ResponseEntity.ok(CustomApiResponse.of(ResponseCode.SUCCESS, memberRoles));
     }
+
+    @GetMapping("/{id}")
+    private ResponseEntity<CustomApiResponse<MemberResponseDTO>> getMemberById(@PathVariable("id") Integer id){
+        MemberResponseDTO dto = memberQueryService.getMemberById(id);
+        return ResponseEntity.ok(CustomApiResponse.of(ResponseCode.SUCCESS, dto));
+    }
 }

@@ -9,6 +9,7 @@ import com.piveguyz.empickbackend.employment.jobtests.answer.command.application
 import com.piveguyz.empickbackend.facade.JobtestFacade;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@SecurityRequirement(name = "bearerAuth")
 @Tag(name = "실무테스트 API", description = "실무테스트 관련 API")
 @RestController
 @RequiredArgsConstructor
@@ -30,7 +32,8 @@ public class AnswerCommandController {
             description = """
                     실무테스트 지원서별 답변을 등록합니다.
                     - 지원자가 실무테스트 문제를 풀 때 다음 문제로 넘어가면 등록되는 데이터
-                    """
+                    """,
+            security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses(value = {
     })
@@ -49,8 +52,9 @@ public class AnswerCommandController {
                     - 인사팀이 수동을 답안의 정답 여부와 받은 점수를 수정하는 기능(정정하기 기능)
                     정답 여부, 점수 수정 가능합니다.
                     - isCorrect : WRONG, PARTIAL, CORRECT (null 가능)
-                    
-                    """
+                    """,
+            security = @SecurityRequirement(name = "bearerAuth"),
+            hidden = true
     )
     @ApiResponses(value = {
     })
@@ -67,11 +71,12 @@ public class AnswerCommandController {
     @Operation(
             summary = "실무테스트 지원서별 답변 채점",
             description = """
-                    실무테스트 지원서별 답변을 수정합니다.
+                    실무테스트 지원서별 답변을 채점합니다.
                     - 시스템이 실무테스트에 해당하는 답안을 채점하고 답변 테이블에 정답 여부와 받은 점수를 기록하는 기능
                     정답 여부, 점수가 자동으로 저장(수정)됩니다.
                     채점된 답안들을 반환합니다.
-                    """
+                    """,
+            security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses(value = {
     })
@@ -88,7 +93,8 @@ public class AnswerCommandController {
             summary = "실무테스트 지원서별 답변 삭제",
             description = """
                     실무테스트 지원서별 답변을 삭제합니다.
-                    """
+                    """,
+            security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses(value = {
     })

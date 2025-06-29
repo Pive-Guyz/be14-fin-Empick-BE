@@ -7,6 +7,7 @@ import com.piveguyz.empickbackend.common.response.ResponseCode;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/approval/categories/{categoryId}/items")
+@SecurityRequirement(name = "bearerAuth")
 public class ApprovalCategoryItemQueryController {
 	private final ApprovalCategoryItemQueryService service;
 
@@ -33,6 +35,7 @@ public class ApprovalCategoryItemQueryController {
 //	}
 
 	// 카테고리 내 단일 항목
+	@Operation(summary = "카테고리 내 단일 항목", description = "카테고리 내 단일 항목을 조회합니다.")
 	@GetMapping("{itemId}")
 	public ResponseEntity<CustomApiResponse<ApprovalCategoryItemQueryDTO>> findById(
 					@PathVariable("categoryId") Integer categoryId,
@@ -44,6 +47,7 @@ public class ApprovalCategoryItemQueryController {
 	}
 
 	// 카테고리별 전체 항목
+	@Operation(summary = "카테고리별 전체 항목", description = "카테고리별 전체 항목을 조회합니다.")
 	@GetMapping
 	public ResponseEntity<CustomApiResponse<List<ApprovalCategoryItemQueryDTO>>> findByCategoryId(@PathVariable("categoryId") Integer categoryId) {
 		List<ApprovalCategoryItemQueryDTO> dtoList = service.findByCategoryId(categoryId);

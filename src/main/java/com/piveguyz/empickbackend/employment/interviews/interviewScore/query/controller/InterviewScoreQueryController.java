@@ -6,6 +6,7 @@ import com.piveguyz.empickbackend.employment.interviews.interviewScore.query.dto
 import com.piveguyz.empickbackend.employment.interviews.interviewScore.query.service.InterviewScoreQueryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import java.util.List;
 @Tag(name = "면접 평가 점수 API", description = "면접 평가 점수 관리")
 @RestController
 @RequestMapping("/api/v1/employment/interview-score")
+@SecurityRequirement(name = "bearerAuth")
 public class InterviewScoreQueryController {
     private final InterviewScoreQueryService interviewScoreQueryService;
 

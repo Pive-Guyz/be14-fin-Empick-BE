@@ -36,24 +36,24 @@ public class ApplicationCommandServiceImp implements ApplicationCommandService {
 
     @Override
     public ApplicationCommandDTO updated(ApplicationCommandDTO dto) {
+        System.out.println("🔄 Application 업데이트 요청: " + dto.getId());
+        System.out.println("📋 요청 데이터: status=" + dto.getStatus() + ", introduceRatingResultId=" + dto.getIntroduceRatingResultId());
+
         // 1. 해당 ID의 지원서가 존재하는지 확인
         ApplicationEntity entity = applicationRepository.findById(dto.getId())
                 .orElseThrow(() -> new BusinessException(ResponseCode.EMPLOYMENT_APPLICATION_NOT_FOUND));
 
-        // 2. 필드 업데이트 (status와 introduceRatingResultId)
-        entity.setStatus(dto.getStatus());
+        System.out.println("📋 기존 entity: status=" + entity.getStatus() + ", introduceRatingResultId=" + entity.getIntroduceRatingResultId());
 
-        // introduceRatingResultId가 null이 아닌 경우에만 업데이트
-        if (dto.getIntroduceRatingResultId() != null) {
-            entity.setIntroduceRatingResultId(dto.getIntroduceRatingResultId());
-        }
+        // 2. 새로운 매퍼 메서드를 사용하여 업데이트
+        ApplicationCommandMapper.updateFromDTO(entity, dto, 1);
 
-        // updatedAt과 updatedBy도 설정
-        entity.setUpdatedAt(LocalDateTime.now());
-        // entity.setUpdatedBy(현재_사용자_ID); // 필요시 추가
+        System.out.println("📋 업데이트 후 entity: status=" + entity.getStatus() + ", introduceRatingResultId=" + entity.getIntroduceRatingResultId());
 
         // 3. 저장
         ApplicationEntity updated = applicationRepository.save(entity);
+
+        System.out.println("✅ Application 업데이트 완료: " + updated.getId());
 
         // 4. entity → dto 변환 후 반환
         return ApplicationCommandMapper.toDTO(updated);

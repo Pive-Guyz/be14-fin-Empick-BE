@@ -14,6 +14,8 @@ import com.piveguyz.empickbackend.approvals.approval.query.service.ApprovalQuery
 import com.piveguyz.empickbackend.common.response.CustomApiResponse;
 import com.piveguyz.empickbackend.common.response.ResponseCode;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
@@ -21,11 +23,13 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/approval/documents")
+@SecurityRequirement(name = "bearerAuth")
 public class ApprovalDetailQueryController {
 
 	private final ApprovalDetailQueryService approvalDetailQueryService;
 
 	// 요청받은 결재문서 상세조회
+	@Operation(summary = "요청받은 결재문서 상세조회", description = "요청받은 결재문서를 조회합니다.")
 	@GetMapping("/received/{id}")
 	public ResponseEntity<CustomApiResponse<ApprovalReceivedDetailQueryDTO>> getReceivedApprovalDetail(
 		@PathVariable("id") Integer approvalId,
@@ -37,6 +41,7 @@ public class ApprovalDetailQueryController {
 	}
 
 	// 요청한 결재문서 상세조회
+	@Operation(summary = "요청한 결재문서 상세조회", description = "요청한 결재문서를 조회합니다.")
 	@GetMapping("/requested/{id}")
 	public ResponseEntity<CustomApiResponse<ApprovalRequestedDetailQueryDTO>> getRequestedApprovalDetail(
 		@PathVariable("id") Integer approvalId

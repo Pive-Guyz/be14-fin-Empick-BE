@@ -6,6 +6,7 @@ import com.piveguyz.empickbackend.employment.interviews.interviewSheet.command.a
 import com.piveguyz.empickbackend.employment.interviews.interviewSheet.command.application.service.InterviewSheetCommandService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name="면접 평가표 API", description="면접 평가표 관리")
 @RestController
 @RequestMapping("/api/v1/employment/interview-sheet")
+@SecurityRequirement(name = "bearerAuth")
 public class InterviewSheetCommandController {
     private final InterviewSheetCommandService service;
 

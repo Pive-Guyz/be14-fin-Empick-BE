@@ -3,30 +3,32 @@ package com.piveguyz.empickbackend.employment.jobtests.jobtest.command.applicati
 import com.piveguyz.empickbackend.common.exception.BusinessException;
 import com.piveguyz.empickbackend.common.response.ResponseCode;
 import com.piveguyz.empickbackend.employment.jobtests.jobtest.command.application.dto.CreateJobtestCommandDTO;
+import com.piveguyz.empickbackend.employment.jobtests.jobtest.command.application.dto.CreateJobtestQuestionCommandDTO;
 import com.piveguyz.empickbackend.employment.jobtests.jobtest.command.application.dto.UpdateJobtestCommandDTO;
 import com.piveguyz.empickbackend.employment.jobtests.jobtest.command.application.mapper.JobtestMapper;
+import com.piveguyz.empickbackend.employment.jobtests.jobtest.command.application.mapper.JobtestQuestionMapper;
 import com.piveguyz.empickbackend.employment.jobtests.jobtest.command.domain.aggregate.JobtestEntity;
+import com.piveguyz.empickbackend.employment.jobtests.jobtest.command.domain.aggregate.JobtestQuestionEntity;
+import com.piveguyz.empickbackend.employment.jobtests.jobtest.command.domain.repository.ApplicationJobtestRepository;
+import com.piveguyz.empickbackend.employment.jobtests.jobtest.command.domain.repository.JobtestQuestionRepository;
 import com.piveguyz.empickbackend.employment.jobtests.jobtest.command.domain.repository.JobtestRepository;
 import com.piveguyz.empickbackend.orgstructure.member.command.domain.repository.MemberRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
-import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 
 @Service
+@RequiredArgsConstructor
 public class JobtestCommandServiceImpl implements JobtestCommandService {
     private final JobtestRepository jobtestRepository;
     private final MemberRepository memberRepository;
-
-    public JobtestCommandServiceImpl(JobtestRepository jobtestRepository,
-                                     MemberRepository memberRepository) {
-        this.jobtestRepository = jobtestRepository;
-        this.memberRepository = memberRepository;
-    }
-
+    private final ApplicationJobtestRepository applicationJobtestRepository;
+    private final JobtestQuestionRepository jobtestQuestionRepository;
 
     // 실무테스트 등록
     @Override
@@ -59,8 +61,32 @@ public class JobtestCommandServiceImpl implements JobtestCommandService {
             throw new BusinessException(ResponseCode.EMPLOYMENT_INVALID_UPDATED_MEMBER);
         }
 
+        // 이미 할당되었다면
+        if(applicationJobtestRepository.existsByJobTestId(id)) {
+            throw new BusinessException(ResponseCode.EMPLOYMENT_JOBTEST_UPDATE_CONFLICT);
+        }
+
         jobtest.updateJobtestEntity(updateJobtestCommandDTO);
         JobtestEntity updatedEntity = jobtestRepository.save(jobtest);
+
+        // 할당된 문제라면 기존 할당 문제 삭제 후 재등록
+        if(jobtestQuestionRepository.existsByJobTestId((id))) {
+            // 할당 관계 삭제
+            jobtestQuestionRepository.deleteByJobTestId(id);
+
+            // 새 문제 저장
+            List<JobtestQuestionEntity> newJobtestQuestions = new ArrayList<>();
+            List<CreateJobtestQuestionCommandDTO> jobtestQuestionDTOs = updateJobtestCommandDTO.getJobtestQuestions();
+
+            for(int i = 0; i < jobtestQuestionDTOs.size(); i++) {
+                CreateJobtestQuestionCommandDTO dto = jobtestQuestionDTOs.get(i);
+            JobtestQuestionEntity entity = JobtestQuestionMapper.toEntity(dto, i+1, id);
+                newJobtestQuestions.add(entity);
+            }
+
+            jobtestQuestionRepository.saveAll(newJobtestQuestions);
+        }
+
         return JobtestMapper.toUpdateDto(updatedEntity);
     }
 

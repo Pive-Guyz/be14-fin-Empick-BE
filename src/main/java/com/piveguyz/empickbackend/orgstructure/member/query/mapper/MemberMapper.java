@@ -18,4 +18,6 @@ public interface MemberMapper {
     List<MemberResponseDTO> findMembersByEmployeeNumber(@Param("employeeNumber") int employeeNumber);
 
     List<MemberResponseDTO> findAllMembers();
+
+    MemberResponseDTO getMemberById(Integer id);
 }

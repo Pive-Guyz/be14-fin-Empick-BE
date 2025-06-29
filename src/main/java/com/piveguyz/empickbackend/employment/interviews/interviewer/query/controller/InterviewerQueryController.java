@@ -8,6 +8,7 @@ import com.piveguyz.empickbackend.employment.interviews.interviewer.query.dto.In
 import com.piveguyz.empickbackend.employment.interviews.interviewer.query.service.InterviewerQueryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/employment/interviewer")
 @AllArgsConstructor
+@SecurityRequirement(name = "bearerAuth")
 public class InterviewerQueryController {
     private final InterviewerQueryService service;
 

@@ -19,7 +19,7 @@ public class IntroduceStandardItemCommandController {
 
     private final IntroduceStandardItemCommandService introduceStandardItemCommandService;
 
-    @Operation(summary = "자기소개서 기준표 항목 등록", description = "자기소개서 기준표 항목을 등록합니다")
+    @Operation(summary = "자기소개서 기준표 항목 등록", description = "자기소개서 기준표 항목을 등록합니다.")
     @PostMapping
     public ResponseEntity<CustomApiResponse<IntroduceStandardItemCommandDTO>> create(
             @RequestBody @Valid IntroduceStandardItemCommandDTO dto) {
@@ -29,7 +29,7 @@ public class IntroduceStandardItemCommandController {
     }
 
     @PatchMapping("/{id}")
-    @Operation(summary = "자기소개서 기준표 항목 수정", description = "자기소개서 기준표 항목의 기준표 ID 등 정보를 수정한다.")
+    @Operation(summary = "자기소개서 기준표 항목 수정", description = "자기소개서 기준표 항목을 수정합니다.")
     public ResponseEntity<CustomApiResponse<IntroduceStandardItemCommandDTO>> update(
             @PathVariable int id,
             @RequestBody @Valid IntroduceStandardItemCommandDTO dto) {
@@ -39,7 +39,7 @@ public class IntroduceStandardItemCommandController {
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "자기소개서 기준표 항목 삭제", description = "자기소개서 기준표 항목을 삭제한다.")
+    @Operation(summary = "자기소개서 기준표 항목 삭제", description = "자기소개서 기준표 항목을 삭제합니다.")
 
     public ResponseEntity<CustomApiResponse<Integer>> delete(@PathVariable int id) {
         int deletedId = introduceStandardItemCommandService.delete(id);

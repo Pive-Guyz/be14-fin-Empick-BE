@@ -34,6 +34,8 @@
         <result property="status" column="status"/>
         <result property="updatedAt" column="updated_at"/>
         <result property="updatedBy" column="updated_by"/>
+        <result property="applicationJobtestId" column="application_jobtest_id"/>
+        <result property="applicationJobtestTitle" column="application_jobtest_title"/>
     </resultMap>
 
     <select id="findAllApplicantFullInfo" resultMap="ApplicantFullInfoResultMap">
@@ -54,12 +56,17 @@
         j.id as job_id,
         j.name as job_name,
         ap.updated_at,
-        ap.updated_by
+        ap.updated_by,
+        ajt.id AS application_jobtest_id,
+        jt.title AS application_jobtest_title
+
         FROM applicant AS a
         LEFT JOIN application ap ON a.id = ap.applicant_id
         LEFT JOIN recruitment r ON ap.recruitment_id = r.id
         LEFT JOIN recruitment_request rq ON rq.id = r.recruitment_request_id
         LEFT JOIN job j ON j.id = rq.job_id
+        LEFT JOIN application_job_test ajt ON ajt.application_id = ap.id
+        LEFT JOIN job_test jt ON ajt.job_test_id = jt.id
     </select>
 
     <select id="findAllApplicant" resultMap="ApplicantResultMap">

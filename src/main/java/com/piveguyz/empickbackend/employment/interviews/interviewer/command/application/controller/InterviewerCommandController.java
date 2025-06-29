@@ -7,6 +7,7 @@ import com.piveguyz.empickbackend.employment.interviews.interviewer.command.appl
 import com.piveguyz.empickbackend.employment.interviews.interviewer.command.application.service.InterviewerCommandService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "면접 담당자 API", description = "면접 담당자 관리")
 @RestController
 @RequestMapping("/api/v1/employment/interviewer")
+@SecurityRequirement(name = "bearerAuth")
 public class InterviewerCommandController {
     private final InterviewerCommandService service;
     private final InterviewFacade facade;

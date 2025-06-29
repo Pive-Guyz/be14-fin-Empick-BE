@@ -5,13 +5,16 @@ import com.piveguyz.empickbackend.common.response.ResponseCode;
 import com.piveguyz.empickbackend.employment.jobtests.evaluation.command.application.dto.CreateEvaluationCriteriaCommandDTO;
 import com.piveguyz.empickbackend.employment.jobtests.evaluation.command.application.dto.UpdateEvaluationCriteriaCommandDTO;
 import com.piveguyz.empickbackend.employment.jobtests.evaluation.command.application.service.EvaluationCriteriaCommandService;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Hidden
 @Tag(name = "실무테스트 API", description = "실무테스트 관련 API")
 @RestController
 @RequestMapping("/api/v1/employment/evaluation-criteria")
@@ -26,8 +29,9 @@ public class EvaluationCriteriaCommandController {
     @Operation(
             summary = "실무 테스트 평가 기준 등록",
             description = """
-                     실무 테스트 평가 기준를 등록합니다.
-                    """
+                    실무 테스트 평가 기준를 등록합니다.
+                    """,
+            security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses(value = {
 
@@ -46,7 +50,8 @@ public class EvaluationCriteriaCommandController {
             description = """
                     실무테스트 평가 기준을 수정합니다.
                     - content, detail_content, score_weight 을 수정할 수 있습니다.
-                    """
+                    """,
+            security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses(value = {
 
@@ -61,12 +66,13 @@ public class EvaluationCriteriaCommandController {
     }
 
 
-    // 실무 테스트 평가 기준 삭제
+//     실무 테스트 평가 기준 삭제
     @Operation(
             summary = "실무테스트 평가 기준 삭제",
             description = """
-                     실무 테스트 평가 기준을 삭제합니다.
-                    """
+                    실무 테스트 평가 기준을 삭제합니다.
+                    """,
+            security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses(value = {
 

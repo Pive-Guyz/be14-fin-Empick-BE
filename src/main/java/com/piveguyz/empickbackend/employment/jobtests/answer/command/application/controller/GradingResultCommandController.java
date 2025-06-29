@@ -5,13 +5,17 @@ import com.piveguyz.empickbackend.common.response.ResponseCode;
 import com.piveguyz.empickbackend.employment.jobtests.answer.command.application.dto.CreateGradingResultCommandDTO;
 import com.piveguyz.empickbackend.employment.jobtests.answer.command.application.dto.UpdateGradingResultCommandDTO;
 import com.piveguyz.empickbackend.employment.jobtests.answer.command.application.service.GradingResultCommandService;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Hidden
+@SecurityRequirement(name = "bearerAuth")
 @Tag(name = "실무테스트 API", description = "실무테스트 관련 API")
 @RestController
 @RequestMapping("/api/v1/employment/grading-results")
@@ -25,8 +29,9 @@ public class GradingResultCommandController {
     @Operation(
             summary = "실무테스트 답안 채점 결과 등록",
             description = """
-                     실무테스트 답안 채점 결과를 등록합니다.
-                    """
+                    실무테스트 답안 채점 결과를 등록합니다.
+                    """,
+            security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses(value = {
     })
@@ -41,8 +46,9 @@ public class GradingResultCommandController {
     @Operation(
             summary = "실무테스트 답안 채점 결과 수정",
             description = """
-                     실무테스트 답안 채점 결과를 수정합니다.
-                    """
+                    실무테스트 답안 채점 결과를 수정합니다.
+                    """,
+            security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses(value = {
     })
@@ -58,8 +64,9 @@ public class GradingResultCommandController {
     @Operation(
             summary = "실무테스트 답안 채점 결과 삭제",
             description = """
-                     실무 테스트 답안 채점 결과를 삭제합니다.
-                    """
+                    실무 테스트 답안 채점 결과를 삭제합니다.
+                    """,
+            security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses(value = {
     })
