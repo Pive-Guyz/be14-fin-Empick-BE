@@ -9,6 +9,7 @@ import com.piveguyz.empickbackend.employment.jobtests.jobtest.command.applicatio
 import com.piveguyz.empickbackend.facade.JobtestFacade;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +30,8 @@ public class JobtestCommandController {
             description = """
                     실무테스트를 등록합니다.
                     - difficulty : EASY / MEDIUM / HARD
-                    """
+                    """,
+            security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "2402", description = "작성자 정보가 유효하지 않습니다."),
@@ -49,7 +51,8 @@ public class JobtestCommandController {
             description = """
                     실무테스트를 수정합니다.
                     - id에 해당하는 실무테스트의 시험 시간, 난이도 수정 가능
-                    """
+                    """,
+            security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "2402", description = "작성자 정보가 유효하지 않습니다."),
@@ -68,7 +71,8 @@ public class JobtestCommandController {
             summary = "실무테스트 삭제",
             description = """
                     id에 해당하는 실무테스트를 삭제합니다.
-                    """
+                    """,
+            security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "2422", description = "요청한 실무테스트를 찾을 수 없습니다."),

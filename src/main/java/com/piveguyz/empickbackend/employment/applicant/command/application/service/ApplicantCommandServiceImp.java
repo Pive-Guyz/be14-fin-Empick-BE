@@ -18,14 +18,6 @@ public class ApplicantCommandServiceImp implements ApplicantCommandService {
     @Override
     public ApplicantCommandDTO createApplicant(ApplicantCommandDTO dto) {
 
-        if (applicantRepository.existsByEmail(dto.getEmail())) {
-            throw new BusinessException(ResponseCode.EMPLOYMENT_APPLICANT_DUPLICATE_EMAIL);
-        }
-
-        if (applicantRepository.existsByPhone(dto.getPhone())) {
-            throw new BusinessException(ResponseCode.EMPLOYMENT_APPLICANT_DUPLICATE_PHONE);
-        }
-
         ApplicantEntity entity = ApplicantCommandMapper.toEntity(dto);
         ApplicantEntity saved = applicantRepository.save(entity);
         return ApplicantCommandMapper.toDto(saved);

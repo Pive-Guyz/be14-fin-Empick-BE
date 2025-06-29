@@ -8,8 +8,8 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import org.springframework.context.annotation.Configuration;
 
 @OpenAPIDefinition(
-        info = @Info(title = "Empick API", version = "v1"),
-        security = @SecurityRequirement(name = "bearerAuth")
+        info = @Info(title = "Empick API", version = "v1")
+        // security = @SecurityRequirement(name = "bearerAuth")  // 테스트용으로 주석 처리
 )
 @SecurityScheme(
         name = "bearerAuth",

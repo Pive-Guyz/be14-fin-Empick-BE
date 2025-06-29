@@ -6,6 +6,8 @@ import com.piveguyz.empickbackend.approvals.approval.query.dto.ApprovalRequested
 import com.piveguyz.empickbackend.approvals.approval.query.service.ApprovalQueryService;
 import com.piveguyz.empickbackend.common.response.CustomApiResponse;
 import com.piveguyz.empickbackend.common.response.ResponseCode;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,9 +23,11 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/approval/documents")
+@SecurityRequirement(name = "bearerAuth")
 public class ApprovalQueryController {
 	private final ApprovalQueryService service;
 
+	@Operation(summary = "결재 문서 전체 조회", description = "전체 결재 문서를 조회합니다.")
 	@GetMapping
 	public ResponseEntity<CustomApiResponse<List<ApprovalQueryDTO>>> findAll() {
 		List<ApprovalQueryDTO> dtoList = service.findAll();
@@ -32,6 +36,7 @@ public class ApprovalQueryController {
 			.body(CustomApiResponse.of(result, dtoList));
 	}
 
+	@Operation(summary = "결재 문서 상세 조회", description = "결재 문서를 id로 상세 조회합니다.")
 	@GetMapping("/{id}")
 	public ResponseEntity<CustomApiResponse<ApprovalQueryDTO>> findById(@PathVariable("id") Integer id) {
 		ApprovalQueryDTO dto = service.findById(id);
@@ -39,7 +44,7 @@ public class ApprovalQueryController {
 		return ResponseEntity.status(result.getHttpStatus())
 				.body(CustomApiResponse.of(result, dto));
 	}
-
+	@Operation(summary = "결재 유형별 결재 문서 조회", description = "결재 유형별로 문서를 조회합니다.")
 	@GetMapping("/category/{categoryId}")
 	public ResponseEntity<CustomApiResponse<List<ApprovalQueryDTO>>> findByCategoryId(@PathVariable("categoryId") Integer categoryId) {
 		List<ApprovalQueryDTO> dtoList = service.findByCategoryId(categoryId);
@@ -48,6 +53,7 @@ public class ApprovalQueryController {
 				.body(CustomApiResponse.of(result, dtoList));
 	}
 
+	@Operation(summary = "작성자별 결재 문서 조회", description = "작성자별로 문서를 조회합니다.")
 	@GetMapping("/writer/{writerId}")
 	public ResponseEntity<CustomApiResponse<List<ApprovalQueryDTO>>> findByWriterId(@PathVariable("writerId") Integer writerId) {
 		List<ApprovalQueryDTO> dtoList = service.findByWriterId(writerId);
@@ -57,6 +63,7 @@ public class ApprovalQueryController {
 	}
 
 	// 자신이 결재자인 결재문서 목록
+	@Operation(summary = "자신이 결재자인 결재문서 목록", description = "자신이 결재자인 결재문서 목록을 조회합니다.")
 	@GetMapping("/received")
 	public ResponseEntity<CustomApiResponse<List<ApprovalReceivedQueryDTO>>> findReceivedApprovals(
 		@RequestParam("memberId") Integer memberId) {
@@ -67,6 +74,7 @@ public class ApprovalQueryController {
 	}
 
 	// 내가 요청한 결재문서 목록
+	@Operation(summary = "내가 요청한 결재문서 목록", description = "내가 요청한 결재문서 목록을 조회합니다.")
 	@GetMapping("/requested")
 	public ResponseEntity<CustomApiResponse<List<ApprovalRequestedListQueryDTO>>> findRequestedApprovals(
 		@RequestParam("memberId") Integer memberId) {

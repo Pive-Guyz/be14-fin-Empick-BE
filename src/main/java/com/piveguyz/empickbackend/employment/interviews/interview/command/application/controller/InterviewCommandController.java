@@ -7,6 +7,7 @@ import com.piveguyz.empickbackend.employment.interviews.interview.command.applic
 import com.piveguyz.empickbackend.employment.interviews.interview.command.application.service.InterviewCommandService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 
+@SecurityRequirement(name = "bearerAuth")
 @Tag(name="면접 API", description="면접 관리")
 @RestController
 @RequestMapping("/api/v1/employment/interview")
@@ -65,6 +67,16 @@ public class InterviewCommandController {
                 .body(CustomApiResponse.of(result, updatedDTO));
     }
 
+    @Operation(
+            summary = "면접 일시 수정",
+            description = """
+                    - 면접 일시를 수정합니다.
+                    """
+    )
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "요청이 성공적으로 처리되었습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "잘못된 요청입니다.")
+    })
     @PatchMapping("/{id}/datetime")
     public ResponseEntity<CustomApiResponse<InterviewCommandDTO>> updateDateTime(@PathVariable("id") Integer id,
                                                                                  @RequestParam("datetime")
@@ -76,6 +88,16 @@ public class InterviewCommandController {
                 .body(CustomApiResponse.of(result, updatedDTO));
     }
 
+    @Operation(
+            summary = "면접 주소 수정",
+            description = """
+                    - 면접 줌 주소를 수정합니다.
+                    """
+    )
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "요청이 성공적으로 처리되었습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "잘못된 요청입니다.")
+    })
     @PatchMapping("/{id}/address")
     public ResponseEntity<CustomApiResponse<InterviewCommandDTO>> updateAddress(@PathVariable("id") Integer id,
                                                                                 @RequestParam("address") String address) {

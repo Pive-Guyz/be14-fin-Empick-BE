@@ -6,6 +6,7 @@ import com.piveguyz.empickbackend.common.response.CustomApiResponse;
 import com.piveguyz.empickbackend.common.response.ResponseCode;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/approval/categories")
+@SecurityRequirement(name = "bearerAuth")
 public class ApprovalCategoryQueryController {
 	private final ApprovalCategoryQueryService service;
 
@@ -38,6 +40,7 @@ public class ApprovalCategoryQueryController {
 			.body(CustomApiResponse.of(result, dtoList));
 	}
 
+	@Operation(summary = "결재 유형 상세 조회", description = "결재 유형을 id로 조회합니다.")
 	@GetMapping("/{id}")
 	public ResponseEntity<CustomApiResponse<ApprovalCategoryQueryDTO>> findById(@PathVariable("id") Integer id) {
 		ApprovalCategoryQueryDTO dto = service.findById(id);
@@ -47,6 +50,7 @@ public class ApprovalCategoryQueryController {
 	}
 
 	// 상위 카테고리로 하위 카테고리 찾기
+	@Operation(summary = "상위 카테고리로 하위 카테고리 찾기", description = "상위 카테고리로 하위 카테고리를 찾을 수 있습니다.")
 	@GetMapping("/{parentId}/children")
 	public ResponseEntity<CustomApiResponse<List<ApprovalCategoryQueryDTO>>> findChildren(@PathVariable("parentId") Integer parentId) {
 		List<ApprovalCategoryQueryDTO> dtoList = service.findByCategoryId(parentId);
@@ -55,6 +59,7 @@ public class ApprovalCategoryQueryController {
 				.body(CustomApiResponse.of(result, dtoList));
 	}
 
+	@Operation(summary = "이름으로 결재 유형 검색", description = "이름으로 결재 유형을 찾을 수 있습니다.")
 	@GetMapping("/name")
 	public ResponseEntity<CustomApiResponse<List<ApprovalCategoryQueryDTO>>> searchByName(@RequestParam("name") String name){
 		List<ApprovalCategoryQueryDTO> dtoList = service.searchByName(name);

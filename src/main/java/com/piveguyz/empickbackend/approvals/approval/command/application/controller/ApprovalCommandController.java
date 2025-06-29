@@ -8,6 +8,7 @@ import com.piveguyz.empickbackend.common.response.CustomApiResponse;
 import com.piveguyz.empickbackend.common.response.ResponseCode;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/approval/documents")
+@SecurityRequirement(name = "bearerAuth")
 public class ApprovalCommandController {
 
     private final ApprovalCommandService approvalCommandService;
@@ -25,7 +27,8 @@ public class ApprovalCommandController {
             summary = "결재 문서 생성",
             description = """
                     결재 문서를 생성합니다.
-                    """
+                    """,
+            security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses(value = {
     })
@@ -40,7 +43,8 @@ public class ApprovalCommandController {
             summary = "결재 문서 승인",
             description = """
                     결재 문서를 승인합니다.
-                    """
+                    """,
+            security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses(value = {
     })
@@ -58,7 +62,8 @@ public class ApprovalCommandController {
             summary = "결재 문서 반려",
             description = """
                     결재 문서를 반려합니다.
-                    """
+                    """,
+            security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses(value = {
     })

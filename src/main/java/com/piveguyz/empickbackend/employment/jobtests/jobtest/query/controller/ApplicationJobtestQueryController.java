@@ -8,6 +8,7 @@ import com.piveguyz.empickbackend.employment.jobtests.jobtest.query.dto.Applicat
 import com.piveguyz.empickbackend.employment.jobtests.jobtest.query.dto.ApplicationJobtestResponseDTO;
 import com.piveguyz.empickbackend.employment.jobtests.jobtest.query.service.ApplicationJobtestQueryService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,8 @@ public class ApplicationJobtestQueryController {
             summary = "지원서별 실무테스트 전체 목록 조회",
             description = """
                     지원서별 실무테스트 전체 목록을 조회합니다.
-                    """
+                    """,
+            security = @SecurityRequirement(name = "bearerAuth")
     )
     @GetMapping
     public ResponseEntity<CustomApiResponse<List<ApplicationJobtestQueryDTO>>> getApplicationJobtestList() {
@@ -37,7 +39,13 @@ public class ApplicationJobtestQueryController {
                 .body(CustomApiResponse.of(ResponseCode.SUCCESS, applicationJobtestList));
     }
 
-
+    @Operation(
+            summary = "특정 지원서별 실무테스트 조회",
+            description = """
+                    특정 지원서별 실무테스트를 조회합니다.
+                    """,
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
     @GetMapping("/{id}")
     public ResponseEntity<CustomApiResponse<ApplicationJobtestAnswerPageDTO>> getApplicationJobtest(
             @PathVariable int id
@@ -52,7 +60,8 @@ public class ApplicationJobtestQueryController {
             summary = "특정 지원서에게 할당된 실무테스트 조회",
             description = """
                     특정 지원서에게 할당된 실무테스트를 조회합니다.
-                    """
+                    """,
+            security = @SecurityRequirement(name = "bearerAuth")
     )
     @GetMapping("/application/{applicationId}")
     public ResponseEntity<CustomApiResponse<ApplicationJobtestResponseDTO>> getApplicationJobtestByApplicationId(

@@ -6,6 +6,7 @@ import com.piveguyz.empickbackend.employment.interviews.interview.query.dto.Inte
 import com.piveguyz.empickbackend.employment.interviews.interview.query.service.InterviewQueryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -16,6 +17,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@SecurityRequirement(name = "bearerAuth")
 @Tag(name="면접 API", description="면접 관리")
 @RestController
 @RequestMapping("/api/v1/employment/interview")

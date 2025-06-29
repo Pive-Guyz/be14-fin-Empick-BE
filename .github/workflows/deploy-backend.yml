@@ -1,5 +1,5 @@
 name: Deploy Backend to VPC2 (Simple Strategy)
-# v.0.0.12
+
 on:
   push:
     branches: [release]
@@ -7,6 +7,7 @@ on:
       - "src/**"
       - "build.gradle"
       - ".github/workflows/**"
+      - "README.md"
   workflow_dispatch: # 수동 실행 가능
 
 env:

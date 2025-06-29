@@ -42,7 +42,7 @@ public class InterviewCriteriaCommandServiceImpl implements InterviewCriteriaCom
         entity.setContent(content);
         entity.setWeight(weight);
         entity.setIsDeleted("N");
-        entity.setMemberId(1);      // 나중에 로그인 JWT토큰으로부터 받아올 예정
+        entity.setMemberId(dto.getMemberId());      // 나중에 로그인 JWT토큰으로부터 받아올 예정
         entity.setUpdatedAt(LocalDateTime.now());
 
         entity = repository.save(entity);

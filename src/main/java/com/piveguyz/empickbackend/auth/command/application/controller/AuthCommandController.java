@@ -126,9 +126,22 @@ public class AuthCommandController {
 
     @PostMapping("/token/refresh")
     public ResponseEntity<CustomApiResponse<LoginResponseDTO>> refresh(@Valid @RequestBody RefreshTokenRequestDTO request) {
-        int memberId = jwtProvider.getMemberIdFromToken(request.getRefreshToken());
+        if (request.getRefreshToken() == null || request.getRefreshToken().isBlank()) {
+            throw new BusinessException(ResponseCode.INVALID_REFRESH_TOKEN);
+        }
+        
+        if (request.getEmployeeNumber() == null || request.getRoles() == null) {
+            throw new BusinessException(ResponseCode.BAD_REQUEST);
+        }
 
-        if (request.getRefreshToken() == null || request.getRefreshToken().isBlank() || !refreshTokenService.validateRefreshToken(memberId, request.getRefreshToken())) {
+        int memberId;
+        try {
+            memberId = jwtProvider.getMemberIdFromToken(request.getRefreshToken());
+        } catch (Exception e) {
+            throw new BusinessException(ResponseCode.INVALID_REFRESH_TOKEN);
+        }
+
+        if (!refreshTokenService.validateRefreshToken(memberId, request.getRefreshToken())) {
             throw new BusinessException(ResponseCode.INVALID_REFRESH_TOKEN);
         }
 

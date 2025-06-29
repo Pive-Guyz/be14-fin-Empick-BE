@@ -1,6 +1,7 @@
 package com.piveguyz.empickbackend.member.command.domain.repository;
 
-import com.piveguyz.empickbackend.member.command.domain.aggregate.MemberEntity;
+import com.piveguyz.empickbackend.orgstructure.member.command.domain.aggregate.MemberEntity;
+import com.piveguyz.empickbackend.orgstructure.member.command.domain.repository.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,17 +23,18 @@ class MemberRepositoryTest {
     @DisplayName("사번으로 회원 조회")
     void findByEmployeeNumber_사번조회_테스트() {
         // given
-        MemberEntity member = new MemberEntity();
-        member.setEmployeeNumber(1001);
-        member.setPassword("encodedPassword");
-        member.setName("테스트사원");
-        member.setPhone("010-1234-5678");
-        member.setPictureUrl("http://example.com/test.jpg");
-        member.setEmail("test@example.com");
-        member.setAddress("서울시 테스트구 테스트동");
-        member.setHireAt(LocalDateTime.now());
-        member.setCreatedAt(LocalDateTime.now());
-        member.setStatus(1); // 계정 활성화
+        MemberEntity member = MemberEntity.builder()
+                .employeeNumber(1001)
+                .password("encodedPassword")
+                .name("테스트사원")
+                .phone("010-1234-5678")
+                .pictureUrl("http://example.com/test.jpg")
+                .email("test@example.com")
+                .address("서울시 테스트구 테스트동")
+                .vacationCount(0)
+                .hireAt(LocalDateTime.now())
+                .status(1)
+                .build();
 
         memberRepository.save(member);
 

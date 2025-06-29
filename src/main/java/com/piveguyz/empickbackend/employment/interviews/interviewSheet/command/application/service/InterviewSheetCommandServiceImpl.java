@@ -30,7 +30,7 @@ public class InterviewSheetCommandServiceImpl implements InterviewSheetCommandSe
         InterviewSheetEntity entity = new InterviewSheetEntity();
         entity.setName(name);
         entity.setIsDeleted("N");
-        entity.setMemberId(1);      // 나중에 토큰으로 id 연결 예정
+        entity.setMemberId(dto.getMemberId());
         entity.setUpdatedAt(LocalDateTime.now());
         InterviewSheetEntity createdEntity = repository.save(entity);
         InterviewSheetCommandDTO createdDTO = mapper.toDTO(createdEntity);
@@ -50,7 +50,7 @@ public class InterviewSheetCommandServiceImpl implements InterviewSheetCommandSe
                         .orElseThrow(() -> new BusinessException(ResponseCode.EMPLOYMENT_INTERVIEW_SHEET_NOT_FOUND));
         entity.setName(name);
         entity.setIsDeleted("N");
-        entity.setMemberId(1);
+        entity.setMemberId(dto.getMemberId());
         entity.setUpdatedAt(LocalDateTime.now());
         InterviewSheetEntity updatedEntity = repository.save(entity);
         InterviewSheetCommandDTO updatedDTO = mapper.toDTO(updatedEntity);

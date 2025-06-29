@@ -9,6 +9,7 @@ import com.piveguyz.empickbackend.employment.jobtests.jobtest.command.applicatio
 import com.piveguyz.empickbackend.facade.JobtestFacade;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +30,8 @@ public class ApplicationJobtestCommandController {
             summary = "지원서별 실무테스트 등록",
             description = """
                     지원서별 실무테스트를 등록합니다.
-                    """
+                    """,
+            security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses(value = {
     })
@@ -46,7 +48,9 @@ public class ApplicationJobtestCommandController {
             description = """
                     지원서별 실무테스트를 수정합니다.
                     - '평가자 코멘트, 제출일, 채점 점수, 평가 점수, 채점 상태, 평가 상태, 입장코드, 평가자'를 수정할 수 있습니다.
-                    """
+                    """,
+            security = @SecurityRequirement(name = "bearerAuth"),
+            hidden = true
     )
     @ApiResponses(value = {
     })
@@ -63,7 +67,8 @@ public class ApplicationJobtestCommandController {
             summary = "지원서별 실무테스트 삭제",
             description = """
                     지원서별 실무테스트를 삭제합니다.
-                    """
+                    """,
+            security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses(value = {
     })

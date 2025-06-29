@@ -1,0 +1,256 @@
+#version: 0.2
+#
+## Empick 백엔드 빌드 및 배포 스펙
+## Spring Boot 애플리케이션 배포 자동화
+#
+#phases:
+#  install:
+#    runtime-versions:
+#      java: corretto11
+#    commands:
+#      - echo "Installing dependencies..."
+#
+#  pre_build:
+#    commands:
+#      - echo "Pre-build phase started on `date`"
+#      - echo "Checking Java version..."
+#      - java -version
+#      - echo "Logging in to Amazon ECR..."
+#      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+#      - REPOSITORY_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/empick-backend
+#      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+#      - IMAGE_TAG=${COMMIT_HASH:=latest}
+#      - echo "Setting up environment variables..."
+#      - |
+#        # 환경 변수 설정 (CodeBuild에서 자동으로 주입됨)
+#        EXECUTION_ROLE_ARN=${EXECUTION_ROLE_ARN:-"arn:aws:iam::$AWS_ACCOUNT_ID:role/empick-ecs-task-execution-role"}
+#        TASK_ROLE_ARN=${TASK_ROLE_ARN:-"arn:aws:iam::$AWS_ACCOUNT_ID:role/empick-ecs-task-role"}
+#        SECRETS_ARN_PREFIX="arn:aws:secretsmanager:$AWS_DEFAULT_REGION:$AWS_ACCOUNT_ID:secret:empick/backend"
+#
+#  build:
+#    commands:
+#      - echo "Build phase started on `date`"
+#      - echo "Building Spring Boot application..."
+#
+#      # Gradle 빌드 (Maven인 경우 mvn clean package -DskipTests)
+#      - |
+#        if [ -f "build.gradle" ]; then
+#          echo "Building with Gradle..."
+#          ./gradlew clean build -x test
+#        elif [ -f "pom.xml" ]; then
+#          echo "Building with Maven..."
+#          mvn clean package -DskipTests
+#        else
+#          echo "No build file found"
+#          exit 1
+#        fi
+#
+#      # Dockerfile 생성
+#      - echo "Creating Dockerfile..."
+#      - |
+#        cat > Dockerfile << 'EOF'
+#        FROM openjdk:17-jre-slim
+#
+#        WORKDIR /app
+#
+#        # JAR 파일 복사 (Gradle 또는 Maven 빌드 결과)
+#        COPY build/libs/*.jar app.jar 2>/dev/null || COPY target/*.jar app.jar
+#
+#        EXPOSE 8080
+#
+#        # 헬스체크
+#        HEALTHCHECK --interval=30s --timeout=3s --start-period=60s --retries=3 \
+#          CMD curl -f http://localhost:8080/actuator/health || exit 1
+#
+#        # 애플리케이션 실행
+#        ENTRYPOINT ["java", "-jar", "app.jar"]
+#        EOF
+#
+#      # Docker 이미지 빌드
+#      - echo "Building Docker image..."
+#      - docker build -t $REPOSITORY_URI:latest .
+#      - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
+#
+#  post_build:
+#    commands:
+#      - echo "Post-build phase started on `date`"
+#      - echo "Pushing Docker image to ECR..."
+#      - docker push $REPOSITORY_URI:latest
+#      - docker push $REPOSITORY_URI:$IMAGE_TAG
+#      - echo "Writing image definitions file..."
+#      - printf '[{"name":"backend","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
+#
+#      # CodeDeploy용 appspec.yml 생성
+#      - echo "Creating appspec.yml for CodeDeploy..."
+#      - |
+#        cat > appspec.yml << 'EOF'
+#        version: 0.0
+#        Resources:
+#          - TargetService:
+#              Type: AWS::ECS::Service
+#              Properties:
+#                TaskDefinition: <TASK_DEFINITION>
+#                LoadBalancerInfo:
+#                  ContainerName: "backend"
+#                  ContainerPort: 8080
+#        EOF
+#
+#      # CodeDeploy용 taskdef.json 생성
+#      - echo "Creating taskdef.json for CodeDeploy..."
+#      - |
+#        cat > taskdef.json << 'EOF'
+#        {
+#          "family": "empick-backend-task",
+#          "networkMode": "awsvpc",
+#          "requiresCompatibilities": ["FARGATE"],
+#          "cpu": "512",
+#          "memory": "1024",
+#          "executionRoleArn": "'$EXECUTION_ROLE_ARN'",
+#          "taskRoleArn": "'$TASK_ROLE_ARN'",
+#          "containerDefinitions": [
+#            {
+#              "name": "backend",
+#              "image": "'$REPOSITORY_URI:$IMAGE_TAG'",
+#              "essential": true,
+#              "portMappings": [
+#                {
+#                  "containerPort": 8080,
+#                  "protocol": "tcp"
+#                }
+#              ],
+#              "secrets": [
+#                {
+#                  "name": "DB_HOST",
+#                  "valueFrom": "'$SECRETS_ARN_PREFIX'/database-3VrJjF:DB_HOST::"
+#                },
+#                {
+#                  "name": "DB_PORT",
+#                  "valueFrom": "'$SECRETS_ARN_PREFIX'/database-3VrJjF:DB_PORT::"
+#                },
+#                {
+#                  "name": "DB_NAME",
+#                  "valueFrom": "'$SECRETS_ARN_PREFIX'/database-3VrJjF:DB_NAME::"
+#                },
+#                {
+#                  "name": "DB_USERNAME",
+#                  "valueFrom": "'$SECRETS_ARN_PREFIX'/database-3VrJjF:DB_USERNAME::"
+#                },
+#                {
+#                  "name": "DB_PASSWORD",
+#                  "valueFrom": "'$SECRETS_ARN_PREFIX'/database-3VrJjF:DB_PASSWORD::"
+#                },
+#                {
+#                  "name": "REDIS_HOST",
+#                  "valueFrom": "'$SECRETS_ARN_PREFIX'/redis-SVuvMG:REDIS_HOST::"
+#                },
+#                {
+#                  "name": "REDIS_PORT",
+#                  "valueFrom": "'$SECRETS_ARN_PREFIX'/redis-SVuvMG:REDIS_PORT::"
+#                },
+#                {
+#                  "name": "REDIS_PASSWORD",
+#                  "valueFrom": "'$SECRETS_ARN_PREFIX'/redis-SVuvMG:REDIS_PASSWORD::"
+#                },
+#                {
+#                  "name": "SPRING_PROFILES_ACTIVE",
+#                  "valueFrom": "'$SECRETS_ARN_PREFIX'/app-uVD1GG:SPRING_PROFILES_ACTIVE::"
+#                },
+#                {
+#                  "name": "MAIL_HOST",
+#                  "valueFrom": "'$SECRETS_ARN_PREFIX'/dev-config-tQnvIt:MAIL_HOST::"
+#                },
+#                {
+#                  "name": "MAIL_PORT",
+#                  "valueFrom": "'$SECRETS_ARN_PREFIX'/dev-config-tQnvIt:MAIL_PORT::"
+#                },
+#                {
+#                  "name": "MAIL_USERNAME",
+#                  "valueFrom": "'$SECRETS_ARN_PREFIX'/dev-config-tQnvIt:MAIL_USERNAME::"
+#                },
+#                {
+#                  "name": "MAIL_PASSWORD",
+#                  "valueFrom": "'$SECRETS_ARN_PREFIX'/dev-config-tQnvIt:MAIL_PASSWORD::"
+#                },
+#                {
+#                  "name": "JWT_SECRET",
+#                  "valueFrom": "'$SECRETS_ARN_PREFIX'/dev-config-tQnvIt:JWT_SECRET::"
+#                },
+#                {
+#                  "name": "AWS_S3_BUCKET",
+#                  "valueFrom": "'$SECRETS_ARN_PREFIX'/dev-config-tQnvIt:AWS_S3_BUCKET::"
+#                },
+#                {
+#                  "name": "AWS_S3_REGION",
+#                  "valueFrom": "'$SECRETS_ARN_PREFIX'/dev-config-tQnvIt:AWS_S3_REGION::"
+#                },
+#                {
+#                  "name": "AWS_ACCESS_KEY",
+#                  "valueFrom": "'$SECRETS_ARN_PREFIX'/dev-config-tQnvIt:AWS_ACCESS_KEY::"
+#                },
+#                {
+#                  "name": "AWS_SECRET_KEY",
+#                  "valueFrom": "'$SECRETS_ARN_PREFIX'/dev-config-tQnvIt:AWS_SECRET_KEY::"
+#                },
+#                {
+#                  "name": "HIKARI_MAX_POOL_SIZE",
+#                  "valueFrom": "'$SECRETS_ARN_PREFIX'/dev-config-tQnvIt:HIKARI_MAX_POOL_SIZE::"
+#                },
+#                {
+#                  "name": "HIKARI_MIN_IDLE",
+#                  "valueFrom": "'$SECRETS_ARN_PREFIX'/dev-config-tQnvIt:HIKARI_MIN_IDLE::"
+#                },
+#                {
+#                  "name": "HIKARI_IDLE_TIMEOUT",
+#                  "valueFrom": "'$SECRETS_ARN_PREFIX'/dev-config-tQnvIt:HIKARI_IDLE_TIMEOUT::"
+#                },
+#                {
+#                  "name": "HIKARI_MAX_LIFETIME",
+#                  "valueFrom": "'$SECRETS_ARN_PREFIX'/dev-config-tQnvIt:HIKARI_MAX_LIFETIME::"
+#                }
+#              ],
+#              "environment": [
+#                {
+#                  "name": "SERVER_PORT",
+#                  "value": "8080"
+#                },
+#                {
+#                  "name": "JAVA_OPTS",
+#                  "value": "-Xmx768m -Xms512m"
+#                },
+#                {
+#                  "name": "SPRING_PROFILES_ACTIVE",
+#                  "value": "production"
+#                }
+#              ],
+#              "logConfiguration": {
+#                "logDriver": "awslogs",
+#                "options": {
+#                  "awslogs-group": "/ecs/empick-backend",
+#                  "awslogs-region": "ap-northeast-2",
+#                  "awslogs-stream-prefix": "ecs"
+#                }
+#              },
+#              "healthCheck": {
+#                "command": ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health || exit 1"],
+#                "interval": 30,
+#                "timeout": 5,
+#                "retries": 3,
+#                "startPeriod": 60
+#              }
+#            }
+#          ]
+#        }
+#        EOF
+#
+#      - echo "Build completed on `date`"
+#
+#artifacts:
+#  files:
+#    - imagedefinitions.json
+#    - appspec.yml
+#    - taskdef.json
+#
+#cache:
+#  paths:
+#    - $HOME/.gradle/caches/**/*
+#    - $HOME/.m2/repository/**/*

@@ -28,4 +28,6 @@ public interface JobtestQuestionRepository extends JpaRepository<JobtestQuestion
     @Transactional
     @Query("DELETE FROM JobtestQuestionEntity j WHERE j.jobTestId = :jobTestId")
     void deleteByJobTestId(int jobTestId);
+
+    boolean findByJobTestId(int jobTestId);
 }

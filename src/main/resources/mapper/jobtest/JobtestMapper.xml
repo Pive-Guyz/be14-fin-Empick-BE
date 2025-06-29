@@ -187,6 +187,7 @@
         <result property="applicationJobTestId" column="application_job_test_id"/>
         <result property="title" column="title"/>
         <result property="testTime" column="test_time"/>
+        <result property="startedAt" column="started_at"/>
         <collection property="questions"
                     ofType="com.piveguyz.empickbackend.employment.jobtests.jobtest.query.dto.JobtestExamQuestionSummaryDTO">
             <id property="questionId" column="question_id"/>
@@ -211,6 +212,7 @@
             ajt.id    AS application_job_test_id,
             jt.title,
             jt.test_time,
+            jt.started_at,
             jq.question_id,
             q.type,
             q.content AS question_title,

@@ -19,6 +19,7 @@ import com.piveguyz.empickbackend.employment.recruitment.command.application.ser
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
@@ -26,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/employment/recruitments")
+@SecurityRequirement(name = "bearerAuth")
 public class RecruitmentCommandController {
 	private final RecruitmentCommandService recruitmentCommandService;
 
