@@ -51,6 +51,7 @@ public enum ResponseCode {
     ALREDY_RESIGNED(true, HttpStatus.NOT_ACCEPTABLE, 1107, "퇴사 처리된 사원입니다."),
     INVALID_STATUS_VALUE(true, HttpStatus.BAD_REQUEST, 1108, "요청된 상태 값이 유효하지 않습니다."),
     EDIT_PROPOSAL_MEMBER_MISMATCH(true, HttpStatus.BAD_REQUEST, 1109, "해당 제안이 사원 정보와 일치하지 않습니다."),
+    MEMBER_UPDATE_PERMISSION_DENIED(false, HttpStatus.FORBIDDEN, 1110, "본인의 정보만 수정할 수 있습니다."),
 
     // 부서, 직책, 직무, 직급 관련 NOT_FOUND
     DEPARTMENT_NOT_FOUND(false, HttpStatus.NOT_FOUND, 1200, "요청한 부서를 찾을 수 없습니다."),

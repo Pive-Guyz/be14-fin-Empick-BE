@@ -143,6 +143,10 @@ public class MemberEntity {
         this.pictureUrl = requestedValue;
     }
 
+    public void updateBirth(String requestedValue) {
+        this.birth = requestedValue;
+    }
+
     public void resign(LocalDateTime resignAt, int deletedMemberId) {
         this.resignAt = resignAt;
         this.status = 0; // 비활성

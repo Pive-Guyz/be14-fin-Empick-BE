@@ -169,7 +169,34 @@ public class MailCommandServiceImpl implements MailCommandService {
             sendedDTO.setApplicantId(applicantId);
             sendedDTO.setEmail(email);
             sendedDTO.setTitle(title);
-            sendedDTO.setContent(htmlContent);
+            String content = "[Empick] 실무 테스트 안내드립니다\n" +
+                    applicantName + "님, 안녕하세요.\n" +
+                    "\n" +
+                    "\n" +
+                    "지원해주신 " + recruitmentTitle + " 포지션에 대한 서류 전형에 합격하셨음을 알려드립니다. 축하드립니다!\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "다음 단계인 실무 테스트가 아래와 같이 진행될 예정입니다.\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "시작 시간: " + startedAt + "\n" +
+                    "종료 시간: " + endedAt + "\n" +
+                    "문항 수: " + problemCount + "\n" +
+                    "입장 코드: " + entryCode + "\n" +
+                    "https://www.empick.shop/employment/jobtest/exam/" + jobTestId + "/enter" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "테스트 관련 자세한 정보는 아래 버튼을 통해 확인해주세요.\n" +
+                    "\n" +
+                    "\n" +
+                    "테스트 상세 안내 보기\n" +
+                    "\n" +
+                    "\n" +
+                    "본 메일은 발신 전용입니다. 문의사항은 채용 담당자에게 연락해 주세요.\n";
+            sendedDTO.setContent(content);
             sendedDTO.setSenderId(senderId);
             sendedDTO.setSendedAt(LocalDateTime.now());
             return sendedDTO;
@@ -220,7 +247,34 @@ public class MailCommandServiceImpl implements MailCommandService {
             sendedDTO.setApplicantId(applicantId);
             sendedDTO.setEmail(email);
             sendedDTO.setTitle(title);
-            sendedDTO.setContent(htmlContent);
+            String content = "[Empick] 면접 일정 안내드립니다\n" +
+                    "\n" +
+                    "\n" +
+                    "안녕하세요, " + applicantName + "님.\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "귀하께서 지원하신 " + recruitmentTitle + " 전형의 채용 공고의 실무 테스트 전형에 합격하셨습니다.\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "다음 단계인 면접은 아래 일시에 ZOOM을 통해 비대면으로 진행됩니다.\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "면접 일시: " + formattedDateTime + "\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "아래 버튼을 클릭하여 면접 시간에 맞춰 입장해 주세요.\n" +
+                    "\n" +
+                    "\n" +
+                    interviewAddress + "ZOOM 면접 입장하기\n" +
+                    "\n" +
+                    "\n" +
+                    "본 메일은 발신 전용입니다.\n" +
+                    "면접 관련 문의는 채용 담당자에게 연락 부탁드립니다.\n";
+            sendedDTO.setContent(content);
             sendedDTO.setSenderId(senderId);
             sendedDTO.setSendedAt(LocalDateTime.now());
             return sendedDTO;

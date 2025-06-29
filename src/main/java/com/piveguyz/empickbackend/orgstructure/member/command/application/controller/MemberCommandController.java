@@ -8,6 +8,7 @@ import com.piveguyz.empickbackend.orgstructure.facade.MemberProfileFacade;
 import com.piveguyz.empickbackend.orgstructure.member.command.application.dto.MemberProfileUploadRequestDTO;
 import com.piveguyz.empickbackend.orgstructure.member.command.application.dto.MemberSignUpRequestDTO;
 import com.piveguyz.empickbackend.orgstructure.member.command.application.dto.MemberSignUpResponseDTO;
+import com.piveguyz.empickbackend.orgstructure.member.command.application.dto.MemberUpdateRequestDTO;
 import com.piveguyz.empickbackend.orgstructure.member.command.application.service.MemberCommandService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -18,6 +19,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -198,6 +200,32 @@ public class MemberCommandController {
             @PathVariable int memberId
     ) {
         memberCommandService.resignMember(memberId);
+        return ResponseEntity.ok(CustomApiResponse.of(ResponseCode.SUCCESS));
+    }
+
+    @PutMapping("/me")
+    @Operation(
+            summary = "내 정보 수정",
+            description = """
+            - 로그인한 사용자의 개인 정보를 직접 수정합니다.
+            - 이름, 전화번호, 이메일, 주소, 생년월일을 수정할 수 있습니다.
+            - 본인의 정보만 수정 가능합니다.
+            """,
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "정보 수정 성공"),
+            @ApiResponse(responseCode = "400", description = "유효성 검사 실패", content = @Content(examples = @ExampleObject(value = ApiExamples.ERROR_400_EXAMPLE))),
+            @ApiResponse(responseCode = "403", description = "수정 권한 없음"),
+            @ApiResponse(responseCode = "404", description = "사원 정보 없음", content = @Content(examples = @ExampleObject(value = ApiExamples.ERROR_404_EXAMPLE))),
+            @ApiResponse(responseCode = "409", description = "이메일 중복", content = @Content(examples = @ExampleObject(value = ApiExamples.ERROR_409_EXAMPLE)))
+    })
+    public ResponseEntity<CustomApiResponse<Void>> updateMyInfo(
+            @Valid @RequestBody MemberUpdateRequestDTO request
+    ) {
+        // 현재 로그인한 사용자의 ID를 authFacade에서 가져옴
+        // MemberCommandService에서 권한 검증 수행
+        memberCommandService.updateMyInfo(null, request);
         return ResponseEntity.ok(CustomApiResponse.of(ResponseCode.SUCCESS));
     }
 }

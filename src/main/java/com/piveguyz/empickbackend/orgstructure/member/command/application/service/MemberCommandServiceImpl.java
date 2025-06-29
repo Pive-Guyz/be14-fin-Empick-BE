@@ -10,6 +10,7 @@ import com.piveguyz.empickbackend.infra.s3.dto.S3UploadResponseDTO;
 import com.piveguyz.empickbackend.infra.s3.service.S3Service;
 import com.piveguyz.empickbackend.orgstructure.member.command.application.dto.MemberSignUpRequestDTO;
 import com.piveguyz.empickbackend.orgstructure.member.command.application.dto.MemberSignUpResponseDTO;
+import com.piveguyz.empickbackend.orgstructure.member.command.application.dto.MemberUpdateRequestDTO;
 import com.piveguyz.empickbackend.orgstructure.member.command.domain.aggregate.MemberEntity;
 import com.piveguyz.empickbackend.orgstructure.member.command.domain.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -150,6 +151,39 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         }
 
         member.resign(LocalDateTime.now(), currentMemberId);
+    }
+
+    @Override
+    @Transactional
+    public void updateMyInfo(Integer memberId, MemberUpdateRequestDTO request) {
+        // 현재 로그인 사용자 확인
+        Integer currentMemberId = authFacade.getCurrentMemberId();
+        
+        // memberId가 null인 경우 현재 로그인한 사용자 ID 사용
+        Integer targetMemberId = memberId != null ? memberId : currentMemberId;
+        
+        // 본인 정보만 수정 가능
+        if (!currentMemberId.equals(targetMemberId)) {
+            throw new BusinessException(ResponseCode.MEMBER_UPDATE_PERMISSION_DENIED);
+        }
+
+        // 사원 조회
+        MemberEntity member = memberRepository.findById(targetMemberId)
+                .orElseThrow(() -> new BusinessException(ResponseCode.MEMBER_NOT_FOUND));
+
+        // 이메일 중복 체크 (본인 제외)
+        if (!member.getEmail().equals(request.getEmail()) && 
+            memberRepository.existsByEmail(request.getEmail())) {
+            throw new BusinessException(ResponseCode.MEMBER_EMAIL_DUPLICATED);
+        }
+
+        // 정보 업데이트 (사용자가 수정 가능한 필드만)
+        member.updateName(request.getName());
+        member.updatePhone(request.getPhone());
+        member.updateEmail(request.getEmail());
+        
+        // updatedMemberId 설정
+        member.setUpdatedMemberId(currentMemberId);
     }
 
     /**
